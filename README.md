@@ -1,5 +1,5 @@
 # FUS_LMU
-Execute FUS simulations for clinical studies at the LMU hospital in Munich. Some functions originate from other repositories, like PRESTUS (https://github.com/achetverikov/PRESTUS), Dependencies, etc. 
+Execute FUS simulations for clinical studies at the LMU hospital in Munich. Some functions originate from other repositories, like PRESTUS (https://github.com/achetverikov/PRESTUS), Dependencies (listed below), etc. 
 tussim_skull_3D function (BRIC TUS Simulation Tools) needs to be adjusted, such that kgrid and medium variables are returned.
 ## Dependencies
 - k-wave: http://www.k-wave.org
