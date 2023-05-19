@@ -1,59 +1,64 @@
 %% Sim params
+
 % Data
-subj_id = 'sub-test01';
+subj_id = 'boris';
 filepath = '..\Scans';
-t1_filename = fullfile(filepath, 'sub-test01_t1w.nii');
-ct_filename = fullfile(filepath, 'sub-test01_pct.nii');
+t1_filename = fullfile(filepath, 'boris_t1w.nii');
+ct_filename = fullfile(filepath, 'boris_pct.nii');
 output_dir = fullfile('..\Results');
-position_dir = fullfile('Localite_pos');
 
 acoustic_sim = true;
 thermal_sim = false;
+write_localite_file = false;
 
 % Transducer param
 transducer = 'CTX500';
 
-bowl_coords = [90, 193, 262]; % mm
-focus_coords = [99, 161, 202]; % mm
-% bowl_coords = [128, 128, 256];
-% focus_coords = [128, 128, 128];
-focus_depth = 60; % mm
+% focus_coords = [99, 161, 202]; % mm
+% bowl_coords = [90, 193, 262]; % mm
+focus_coords = [128, 170, 182]; % mm
+bowl_coords = [128, 170, 250]; % mm
+
+isppa_device = 25; % W/cm^2
 
 pulse_length = 20e-3; % s
 pulse_rep_freq = 5; % Hz
 stim_dur = 80; % s
-[pressure, phase] = get_driving_params(focus_depth, transducer); % [Pa, deg]
 
-get_space = false;
+focus_depth = floor(norm(focus_coords - bowl_coords)); % mm
+[~, phase] = get_driving_params(focus_depth, transducer); % [Pa, deg]
+[pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth, isppa_device);
+
 dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
 
-%% Run simulation to get grid and medium
-if get_space
-[kgrid, medium] = ...
-    tussim_skull_3D('', t1_filename, ct_filename, '', [99, 161, 202], [90, 193, 262], 60, 'CTX500');
-dxyz = [kgrid.dx, kgrid.dy, kgrid.dz];
-end
-
-
-% Position / Phase optimization?
-
-
-%% Write transformation matrix into position file for Localite
-t_matrix = get_transducer_transform(bowl_coords*1e-3, focus_coords*1e-3);
-
-position_filename = fullfile(position_dir, 't_position.txt');
-if exist(position_filename, 'file') ~= 2
-    fopen(position_filename, 'w');
-end
-dlmwrite(position_filename, t_matrix, 'delimiter', ' ');
-
-
-%% Run simulation and store results in output_dir
 bowl_coords = bowl_coords * 1e-3 ./ dxyz;
 focus_coords = focus_coords * 1e-3 ./ dxyz;
 
+
+%% Write transformation matrix into position file for Localite
+if write_localite_file
+    position_dir = fullfile('Localite_pos');
+    t_matrix = get_transducer_transform(bowl_coords*dxyz, focus_coords*dxyz);
+    
+    position_filename = fullfile(position_dir, 't_position.txt');
+    if exist(position_filename, 'file') ~= 2
+        fopen(position_filename, 'w');
+    end
+    dlmwrite(position_filename, t_matrix, 'delimiter', ' ');
+end
+
+
+%% Run simulation to get grid and medium
 [kgrid, medium] = ...
-    tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, ...
+    tussim_skull_3D('', t1_filename, ct_filename, '', focus_coords, bowl_coords, focus_depth, transducer);
+% dxyz = [kgrid.dx, kgrid.dy, kgrid.dz];
+
+
+%% TBD: Position / Phase optimization
+
+
+%% Run simulation and store results in output_dir
+tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, ...
     'PulseLength', pulse_length, 'PulseRepFreq', pulse_rep_freq, 'StimDuration', stim_dur, 'SourcePressure', pressure, 'SourcePhase', phase);
 
 
