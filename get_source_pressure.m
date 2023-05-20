@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 400000;%:400000:2000000; % TBD: Dynamic stepsize optimization
+amp = 50000:50000:200000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 if ~exist(filename, 'file')
@@ -45,9 +45,9 @@ medium.alpha_power = 1.5;
 % medium.BonA = 6;
 
 % create the time array
-% t_end = 100e-6;                  % [s]
-% kgrid.makeTime(medium.sound_speed, [], t_end);
-kgrid.makeTime(medium.sound_speed);
+t_end = 100e-6;                  % [s]
+kgrid.makeTime(medium.sound_speed, [], t_end);
+% kgrid.makeTime(medium.sound_speed);
 % kgrid.dt = checkStability(kgrid, medium);
 
 % =========================================================================
@@ -67,9 +67,7 @@ transducer.source_freq_hz = 500e3; % [Hz] the central frequency
 
 
 %% Position + Phase Optimization
-% transducer.source_phase_deg = [0.0, 0.0, 0.0, 0.0];
-transducer.source_phase_deg = [0.0, 307.0, 262.0, 209.0];
-t_position = round([1, Ny/2, Nz/2]);
+t_position = round([Nx/10, Ny/2, Nz/2]);
 t_focuspos = round([Nx, Ny/2, Nz/2]);
   
 [source.p_mask, t_label] = transducer_setup(transducer, t_position, t_focuspos, [Nx, Ny, Nz], dx*1000);
@@ -145,7 +143,9 @@ sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
 % compute Isppa
-max_pressure = max(sensor_data.p_max(:));
+sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
+focus_tolerance = 5;
+max_pressure = max(sensor_data.p_max((focus_depth-focus_tolerance)*1e-3/dx:end, :), [], 'all');
 Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:)))  * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
@@ -157,6 +157,26 @@ end
 % Store in LUT
 save(filename, 'lut');
 
+% =========================================================================
+% COMPUTE THE BEAM PATTERN
+% =========================================================================
+
+% reshape the returned rms and max fields to their original position
+sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
+
+% plot the beam pattern using the pressure maximum
+% voxelPlot(double(source.p_mask));
+
+figure;
+imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
+xlabel([j_label '-position [mm]']);
+ylabel('x-position [mm]');
+title('Total Beam Pattern Using Maximum Of Recorded Pressure');
+colormap(jet(256));
+c = colorbar;
+ylabel(c, 'Pressure [MPa]');
+axis image;
+
 else
     load(filename, 'lut');
 end
@@ -164,24 +184,6 @@ end
 [~,idx]=min(abs(lut.isppa-isppa_device));
 pressure = lut.pressure(idx);
 isppa_lut = lut.isppa(idx);
-
-% % =========================================================================
-% % COMPUTE THE BEAM PATTERN
-% % =========================================================================
-% 
-% % reshape the returned rms and max fields to their original position
-% sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
-% 
-% % plot the beam pattern using the pressure maximum
-% figure;
-% imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
-% xlabel([j_label '-position [mm]']);
-% ylabel('x-position [mm]');
-% title('Total Beam Pattern Using Maximum Of Recorded Pressure');
-% colormap(jet(256));
-% c = colorbar;
-% ylabel(c, 'Pressure [MPa]');
-% axis image;
 
 end
     
