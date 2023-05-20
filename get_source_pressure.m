@@ -85,7 +85,6 @@ p_mask_source_p = reshape(p_mask_source_p,[],1);
 % =========================================================================
 
 % define a sensor mask through the central plane
-% sensor.mask = ones(Nx, Ny, Nz);
 sensor.mask = zeros(Nx, Ny, Nz);
 switch MASK_PLANE
     case 'xy'
@@ -109,7 +108,7 @@ switch MASK_PLANE
         j_label = 'z';
         
 end 
-
+% sensor.mask = ones(Nx, Ny, Nz);
 % set the record mode such that only the rms and peak values are stored
 % sensor.record = {'p_rms', 'p_max'};
 sensor.record = {'p_max'};
@@ -118,8 +117,8 @@ sensor.record = {'p_max'};
 % =========================================================================
 % RUN THE SIMULATIONS for different pressure amplitudes
 % =========================================================================
-lut.isppa = zeros(length(amp));
-lut.pressure = zeros(length(amp));
+lut.isppa = zeros(length(amp), 1);
+lut.pressure = zeros(length(amp), 1);
 lut_idx = 1;
 
 for amp_x = amp
@@ -143,9 +142,9 @@ sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
 % compute Isppa
+x_start = round((focus_depth-5)*1e-3/dx);
 sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
-focus_tolerance = 5;
-max_pressure = max(sensor_data.p_max((focus_depth-focus_tolerance)*1e-3/dx:end, :), [], 'all');
+max_pressure = max(sensor_data.p_max(x_start:end, :), [], 'all');
 Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:)))  * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
@@ -162,20 +161,19 @@ save(filename, 'lut');
 % =========================================================================
 
 % reshape the returned rms and max fields to their original position
-sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
 
 % plot the beam pattern using the pressure maximum
 % voxelPlot(double(source.p_mask));
 
-figure;
-imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
-xlabel([j_label '-position [mm]']);
-ylabel('x-position [mm]');
-title('Total Beam Pattern Using Maximum Of Recorded Pressure');
-colormap(jet(256));
-c = colorbar;
-ylabel(c, 'Pressure [MPa]');
-axis image;
+% figure;
+% imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
+% xlabel([j_label '-position [mm]']);
+% ylabel('x-position [mm]');
+% title('Total Beam Pattern Using Maximum Of Recorded Pressure');
+% colormap(jet(256));
+% c = colorbar;
+% ylabel(c, 'Pressure [MPa]');
+% axis image;
 
 else
     load(filename, 'lut');
