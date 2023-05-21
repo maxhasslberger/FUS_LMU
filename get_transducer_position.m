@@ -7,6 +7,7 @@ thr = 1500; % sound speed threshold (=> water)
 skull_ids_opt = inf;
 inside_skull_opt = inf;
 opt_angle = inf;
+vec_path = zeros(size(medium.sound_speed));
 coordinates = [];
 sound_speed = [];
 
@@ -21,14 +22,14 @@ for phi = phi_var
     
     coordinates_tmp = [];
     sound_speed_tmp = [];
-    vec_path = zeros(size(medium.sound_speed));
+    vec_path_tmp = zeros(size(medium.sound_speed));
     while all(coord_i < size(medium.sound_speed) & coord_i > 1)
         coord_i = round(focus_position + i * coord_vec);
         if sum(prev_coord_x - coord_i) ~= 0
             prev_coord_x = coord_i;
             coordinates_tmp = [coordinates_tmp; coord_i];
             sound_speed_tmp = [sound_speed_tmp; medium.sound_speed(coord_i(1), coord_i(2), coord_i(3))];
-            vec_path(coord_i(1), coord_i(2), coord_i(3)) = 1;
+            vec_path_tmp(coord_i(1), coord_i(2), coord_i(3)) = 1;
         end
         i = i+1;
     end
@@ -42,6 +43,7 @@ for phi = phi_var
             inside_skull_opt = inside_skull_tmp;
             coordinates = coordinates_tmp;
             sound_speed = sound_speed_tmp;
+            vec_path = vec_path_tmp;
             opt_angle = [theta, phi] /pi*180;
         end
 

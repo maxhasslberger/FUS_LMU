@@ -1,5 +1,5 @@
 %% Input params
-
+clear;
 % Data
 subj_id = 'boris';
 filepath = '../Scans';
