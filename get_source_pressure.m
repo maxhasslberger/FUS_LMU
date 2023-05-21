@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 50000:50000:200000; % TBD: Dynamic stepsize optimization
+amp = 30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 if ~exist(filename, 'file')
