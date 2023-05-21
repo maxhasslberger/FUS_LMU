@@ -24,7 +24,7 @@ end
 
 % Find point near the skull
 thr = 1500; % sound speed threshold (=> water)
-offset = 20; % offset points apart from skull
+offset = 30; % offset points apart from skull
 
 outside_skull_idx = find(sound_speed > thr, 1, 'last');
 % voxelPlot(double(medium.sound_speed > 1500 | vec_path));

@@ -20,7 +20,9 @@ transducer = 'CTX500';
 % focus_coords = [99, 161, 202]; % mm
 % bowl_coords = [90, 193, 262]; % mm
 
-focus_coords = [130, 130, 150]; % mm
+% focus_coords = [130, 130, 150]; % mm
+focus_coords = [-41, -16, 59]; % mm
+focus_coords = focus_coords .* [-1, 1, 1] + [192, 256, 256] / 2;
 bowl_coords = focus_coords + [70, 0, 0];
 
 isppa_device = 10; % W/cm^2
@@ -49,7 +51,7 @@ focus_coords = focus_coords * 1e-3 ./ dxyz;
 
 
 %% Run simulation to get grid and medium
-[kgrid, medium] = ...
+[kgrid, medium, focus_coords_tmp, input_ct] = ...
     tussim_skull_3D('', t1_filename, ct_filename, '', focus_coords, bowl_coords, 50, transducer);
 % dxyz = [kgrid.dx, kgrid.dy, kgrid.dz];
 
@@ -57,7 +59,8 @@ focus_coords = focus_coords * 1e-3 ./ dxyz;
 %% Tranducer positioning
 stim_angle = 30; % deg - reference z-axis
 
-bowl_coords = get_transducer_position(medium, focus_coords, stim_angle);
+bowl_coords = get_transducer_position(medium, focus_coords_tmp, stim_angle);
+bowl_coords = bowl_coords + focus_coords - focus_coords_tmp;
 
 % Get remaining control params
 focus_depth = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)); % mm
@@ -68,4 +71,4 @@ focus_depth = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxy
 tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, ...
     'PulseLength', pulse_length, 'PulseRepFreq', pulse_rep_freq, 'StimDuration', stim_dur, 'SourcePressure', pressure, 'SourcePhase', phase);
 
-
+bowl_coords =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1, 1]; % mm
