@@ -10,7 +10,7 @@ output_dir = fullfile('../Results');
 % Simulation options
 acoustic_sim = true;
 thermal_sim = false;
-write_localite_file = false;
+% write_localite_file = false;
 
 % Transducer param
 transducer = 'CTX500';
@@ -19,11 +19,10 @@ transducer = 'CTX500';
 % bowl_coords = [128, 170, 250]; % mm
 % focus_coords = [99, 161, 202]; % mm
 % bowl_coords = [90, 193, 262]; % mm
-
 % focus_coords = [130, 130, 150]; % mm
-focus_coords = [-41, -16, 59]; % mm
-focus_coords = focus_coords .* [-1, 1, 1] + [192, 256, 256] / 2;
-bowl_coords = focus_coords + [70, 0, 0];
+
+focus_coords_mm_orig = [-41, -16, 59]; % mm
+% bowl_coords_mm = focus_coords_mm + [70, 0, 0];
 
 isppa_device = 10; % W/cm^2
 
@@ -34,8 +33,9 @@ stim_dur = 80; % s
 
 % Convert into kgrid space
 dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
-% bowl_coords = bowl_coords * 1e-3 ./ dxyz;
-focus_coords = focus_coords * 1e-3 ./ dxyz;
+% bowl_coords = bowl_coords_mm * 1e-3 ./ dxyz;
+focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + [192, 256, 256] / 2;
+focus_coords = focus_coords_mm * 1e-3 ./ dxyz;
 
 % %% Write transformation matrix into position file for Localite
 % if write_localite_file
@@ -50,25 +50,27 @@ focus_coords = focus_coords * 1e-3 ./ dxyz;
 % end
 
 
-%% Run simulation to get grid and medium
-[kgrid, medium, focus_coords_tmp, input_ct] = ...
-    tussim_skull_3D('', t1_filename, ct_filename, '', focus_coords, bowl_coords, 50, transducer);
-% dxyz = [kgrid.dx, kgrid.dy, kgrid.dz];
+%% Get grid and medium
+[medium, focus_coords_rel, input_ct] = get_medium_param(ct_filename, focus_coords);
 
 
 %% Tranducer positioning
 stim_angle = 30; % deg - reference z-axis
 
-bowl_coords = get_transducer_position(medium, focus_coords_tmp, stim_angle);
-bowl_coords = bowl_coords + focus_coords - focus_coords_tmp;
+bowl_coords = get_transducer_position(medium, focus_coords_rel, stim_angle);
+bowl_coords = bowl_coords + (focus_coords - focus_coords_rel);
+bowl_coords_mm =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1, 1]; % mm
 
-% Get remaining control params
-focus_depth = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)); % mm
-[~, phase] = get_driving_params(focus_depth, transducer); % [Pa, deg]
-[pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth, isppa_device);
+localite_bowl_coords = bowl_coords_mm .* [-1, -1, 1]
+localite_focus_coords = focus_coords_mm_orig .* [-1, -1, 1]
+
+% Get electrical params
+focus_depth_mm = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)) % mm
+[~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+[pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth_mm, isppa_device)
 
 %% Run simulation and store results in output_dir
-tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth, transducer, 'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, ...
-    'PulseLength', pulse_length, 'PulseRepFreq', pulse_rep_freq, 'StimDuration', stim_dur, 'SourcePressure', pressure, 'SourcePhase', phase);
+tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth_mm, transducer, ...
+    'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, 'PulseLength', pulse_length, 'PulseRepFreq', pulse_rep_freq, ...
+    'StimDuration', stim_dur, 'SourcePressure', pressure, 'SourcePhase', phase);
 
-bowl_coords =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1, 1]; % mm
