@@ -85,7 +85,6 @@ p_mask_source_p = reshape(p_mask_source_p,[],1);
 % =========================================================================
 
 % define a sensor mask through the central plane
-% sensor.mask = ones(Nx, Ny, Nz);
 sensor.mask = zeros(Nx, Ny, Nz);
 switch MASK_PLANE
     case 'xy'
@@ -109,7 +108,7 @@ switch MASK_PLANE
         j_label = 'z';
         
 end 
-
+% sensor.mask = ones(Nx, Ny, Nz);
 % set the record mode such that only the rms and peak values are stored
 % sensor.record = {'p_rms', 'p_max'};
 sensor.record = {'p_max'};
@@ -143,8 +142,8 @@ sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
 % compute Isppa
-sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
 x_start = round((focus_depth-5)*1e-3/dx);
+sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
 max_pressure = max(sensor_data.p_max(x_start:end, :), [], 'all');
 Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:)))  * 1e-4; % W/cm^2
 
