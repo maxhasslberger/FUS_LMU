@@ -57,10 +57,11 @@ focus_coords = focus_coords_mm * 1e-3 ./ dxyz;
 %% Tranducer positioning
 stim_angle = 30; % deg - reference z-axis
 
-bowl_coords = get_transducer_position(medium, focus_coords_rel, stim_angle);
+[bowl_coords, transducer_angle] = get_transducer_position(medium, focus_coords_rel, stim_angle);
 bowl_coords = bowl_coords + (focus_coords - focus_coords_rel);
 bowl_coords_mm =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1, 1]; % mm
 
+transducer_angle
 localite_bowl_coords = bowl_coords_mm .* [-1, -1, 1]
 localite_focus_coords = focus_coords_mm_orig .* [-1, -1, 1]
 
