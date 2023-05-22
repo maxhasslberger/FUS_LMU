@@ -1,10 +1,17 @@
 %% Input params
+close all;
 clear;
 % Data
-subj_id = 'boris';
+subj_id = 'theresa';
+% subj_id = 'boris';
+% subj_id = 'FUN0005';
 filepath = '../Scans';
-t1_filename = fullfile(filepath, 'boris_t1w.nii');
-ct_filename = fullfile(filepath, 'boris_pct.nii');
+t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE.nii');
+% t1_filename = fullfile(filepath, 'boris_t1w.nii');
+% t1_filename = fullfile(filepath, 'FUN0005t1_T1w_MPRAGE_t1.nii');
+ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_pct.nii');
+% ct_filename = fullfile(filepath, 'boris_pct.nii');
+% ct_filename = fullfile(filepath, 'FUN0005t1_T1w_pseudoCT.nii');
 output_dir = fullfile('../Results');
 
 % Simulation options
@@ -15,14 +22,9 @@ thermal_sim = false;
 % Transducer param
 transducer = 'CTX500';
 
-% focus_coords = [128, 170, 182]; % mm
-% bowl_coords = [128, 170, 250]; % mm
-% focus_coords = [99, 161, 202]; % mm
-% bowl_coords = [90, 193, 262]; % mm
-% focus_coords = [130, 130, 150]; % mm
-
-focus_coords_mm_orig = [-41, -16, 59]; % mm
-% bowl_coords_mm = focus_coords_mm + [70, 0, 0];
+focus_coords_mm_orig = [-27, -21, 40]; % mm
+% focus_coords_mm_orig = [-41, -16, 59]; % mm
+% focus_coords_mm_orig = [-41, -16, 59]; % mm
 
 isppa_device = 10; % W/cm^2
 
