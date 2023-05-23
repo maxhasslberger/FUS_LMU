@@ -34,11 +34,13 @@ input_ct = niftiread(ct_filename);
 % t1_img = niftiread(t1_filename);
 % header = niftiinfo(ct_filename);
 input_ct = double(input_ct);
+size(input_ct)
 
 voxelPlot(double(input_ct > 1500));
 
 focus_space = zeros(size(input_ct));
 focus_space(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
+voxelPlot(double(input_ct > 1500 | focus_space));
 
 figure;
 imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));

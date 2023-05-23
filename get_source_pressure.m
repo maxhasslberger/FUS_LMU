@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 30000:15000:60000; % TBD: Dynamic stepsize optimization
+amp = 44000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 if ~exist(filename, 'file')
@@ -18,9 +18,11 @@ MASK_PLANE = 'xy';          % set to 'xy' or 'xz' to generate the beam pattern i
 % =========================================================================
 
 % set total number of grid points not including the PML
-Nx = 128;    % [grid points]
-Ny = 64;     % [grid points]
-Nz = 64;     % [grid points]
+Nx = 256;    % [grid points]
+Ny = 256;     % [grid points]
+Nz = 256;     % [grid points]
+% Ny = 128;     % [grid points]
+% Nz = 128;     % [grid points]
 
 % set desired grid size in the x-direction
 x = 150e-3;                  % [m]
@@ -138,14 +140,15 @@ input_args = {'PMLInside', false, 'PlotPML', false, 'DisplayMask', source.p_mask
     'DataCast', DATA_CAST, 'DataRecast', true, 'PlotScale', [-1/2, 1/2] * transducer.source_amp(1)};
 
 % run the simulation
-sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+% sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
 % compute Isppa
 x_start = round((focus_depth-5)*1e-3/dx);
 sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
 max_pressure = max(sensor_data.p_max(x_start:end, :), [], 'all');
-Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:)))  * 1e-4; % W/cm^2
+Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
 lut.pressure(lut_idx) = amp_x;
