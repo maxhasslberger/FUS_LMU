@@ -21,8 +21,9 @@ MASK_PLANE = 'xy';          % set to 'xy' or 'xz' to generate the beam pattern i
 Nx = 256;    % [grid points]
 Ny = 256;     % [grid points]
 Nz = 256;     % [grid points]
-% Ny = 128;     % [grid points]
-% Nz = 128;     % [grid points]
+Nx = 128;    % [grid points]
+Ny = 64;     % [grid points]
+Nz = 64;     % [grid points]
 
 % set desired grid size in the x-direction
 x = 150e-3;                  % [m]
@@ -147,7 +148,7 @@ sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
 % compute Isppa
 x_start = round((focus_depth-5)*1e-3/dx);
 sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
-max_pressure = max(sensor_data.p_max(x_start:end, :), [], 'all');
+[max_pressure, max_idx] = max(sensor_data.p_max(x_start:end, :), [], 'all');
 Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
@@ -157,7 +158,7 @@ lut_idx = lut_idx + 1;
 end
 
 % Store in LUT
-save(filename, 'lut');
+% save(filename, 'lut');
 
 % =========================================================================
 % COMPUTE THE BEAM PATTERN
@@ -168,15 +169,15 @@ save(filename, 'lut');
 % plot the beam pattern using the pressure maximum
 % voxelPlot(double(source.p_mask));
 
-% figure;
-% imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
-% xlabel([j_label '-position [mm]']);
-% ylabel('x-position [mm]');
-% title('Total Beam Pattern Using Maximum Of Recorded Pressure');
-% colormap(jet(256));
-% c = colorbar;
-% ylabel(c, 'Pressure [MPa]');
-% axis image;
+figure;
+imagesc(j_vec * 1e3, (kgrid.x_vec - min(kgrid.x_vec(:))) * 1e3, sensor_data.p_max * 1e-6);
+xlabel([j_label '-position [mm]']);
+ylabel('x-position [mm]');
+title('Total Beam Pattern Using Maximum Of Recorded Pressure');
+colormap(jet(256));
+c = colorbar;
+ylabel(c, 'Pressure [MPa]');
+axis image;
 
 else
     load(filename, 'lut');

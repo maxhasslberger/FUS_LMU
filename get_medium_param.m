@@ -47,7 +47,7 @@ imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, 
 figure;
 imagesc(imrotate(squeeze(input_ct(focus_coords(1), :, :) > 500 | focus_space(focus_coords(1), :, :)), 90));
 figure;
-imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [2 1]), -90));
+imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [1 2]), 90));
 
 % update hu_max
 ct_max = max(input_ct(:));

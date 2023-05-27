@@ -57,16 +57,16 @@ end
 end
 
 % Find point near the skull
-offset = 15; % 25 - offset points apart from skull (=> mm)
+offset = 32; % 15 - offset points apart from skull (=> mm)
 
 out_skull_idx = find(sound_speed > thr, 1, 'last');
 
-voxelPlot(double(medium.sound_speed > 1500 | vec_path));
+% voxelPlot(double(medium.sound_speed > 1500 | vec_path));
 
 bowl_coords = round(coordinates(out_skull_idx, :) + offset * coord_vec / norm(coord_vec));
 
 bowl_mask = zeros(size(medium.sound_speed));
 bowl_mask(bowl_coords(1), bowl_coords(2), bowl_coords(3)) = 1;
 
-voxelPlot(double(bowl_mask | medium.sound_speed > 1500));
+% voxelPlot(double(bowl_mask | medium.sound_speed > 1500));
 
