@@ -5,10 +5,11 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 66283;%45000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
+amp = 45000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
-if ~exist(filename, 'file')
+% if ~exist(filename, 'file')
+if 1
 % simulation settings
 DATA_CAST = 'single';       % set to 'single' or 'gpuArray-single' to speed up computations
 MASK_PLANE = 'xy';          % set to 'xy' or 'xz' to generate the beam pattern in different planes

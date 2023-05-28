@@ -29,10 +29,10 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy, Nz, dz);
 %% Define medium
 
 % define the properties of the propagation medium
-medium.sound_speed = 1540*ones(Nx, Ny, Nz);      % [m/s]
+medium.sound_speed = 1500*ones(Nx, Ny, Nz);      % [m/s]
 medium.density = 1000*ones(Nx, Ny, Nz);          % [kg/m^3]
-medium.alpha_coeff = 0.75;      % [dB/(MHz^y cm)]
-medium.alpha_power = 1.5;
+% medium.alpha_coeff = 0.75;      % [dB/(MHz^y cm)]
+% medium.alpha_power = 1.5;
 % medium.BonA = 6;
 
 % create the time array
@@ -71,7 +71,7 @@ source.p_mask(s_pos(1), s_pos(2), s_pos(3)) = 1;
 
 % define a single time varying sinusoidal source
 source_freq = 0.5e6;           % [MHz]
-source_mag = 30000;            % [Pa]
+source_mag = 45000;            % [Pa]
 source_pressure = source_mag * sin(2 * pi * source_freq * kgrid.t_array);
 
 % filter the source to remove high frequencies not supported by the grid
@@ -108,9 +108,10 @@ f = -Fs/2:Fs/N:Fs/2;
 % Extract phases
 all_phases = angle(fft_signal(:, idx));
 phase = nan(1, transducer.n_elements);
-% phase_idx = [1, 420, 347, 277];
+phase_idx = [1, 420, 347, 277];
 % phase_idx = [1, 873, 143, 1567];
-phase_idx = [1, 774, 474, 719]; % TODO: configure appropriate param for Nx=256, Ny=128, Nz=128
+% phase_idx = [1, 774, 474, 719]; % TODO: configure appropriate param for Nx=256, Ny=128, Nz=128
+phase_idx = [1, 1, 1, 1];
 for i = 1:transducer.n_elements
 %     phase(i) = mean(all_phases(mask_sensor_p == i));
     phase_elements = all_phases(mask_sensor_p == i);
