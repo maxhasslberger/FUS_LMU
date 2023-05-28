@@ -57,7 +57,7 @@ end
 end
 
 % Find point near the skull
-offset = 32; % 15 - offset points apart from skull (=> mm)
+offset = 32; % 15 - offset points apart from skull until transducer element (=> mm)
 
 out_skull_idx = find(sound_speed > thr, 1, 'last');
 

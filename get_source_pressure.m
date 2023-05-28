@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 44000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
+amp = 66283;%45000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 if ~exist(filename, 'file')
@@ -19,14 +19,14 @@ MASK_PLANE = 'xy';          % set to 'xy' or 'xz' to generate the beam pattern i
 
 % set total number of grid points not including the PML
 Nx = 256;    % [grid points]
-Ny = 256;     % [grid points]
-Nz = 256;     % [grid points]
-Nx = 128;    % [grid points]
-Ny = 64;     % [grid points]
-Nz = 64;     % [grid points]
+Ny = 128;     % [grid points]
+Nz = 128;     % [grid points]
+% Nx = 128;    % [grid points]
+% Ny = 64;     % [grid points]
+% Nz = 64;     % [grid points]
 
 % set desired grid size in the x-direction
-x = 150e-3;                  % [m]
+x = 180e-3;                  % [m]
 
 % calculate the spacing between the grid points
 dx = x/Nx;                  % [m]
@@ -41,10 +41,10 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy, Nz, dz);
 % =========================================================================
 
 % define the properties of the propagation medium
-medium.sound_speed = 1540*ones(Nx, Ny, Nz);      % [m/s]
+medium.sound_speed = 1500*ones(Nx, Ny, Nz);      % [m/s]
 medium.density = 1000*ones(Nx, Ny, Nz);          % [kg/m^3]
-medium.alpha_coeff = 0.75;      % [dB/(MHz^y cm)]
-medium.alpha_power = 1.5;
+% medium.alpha_coeff = 0.75;      % [dB/(MHz^y cm)]
+% medium.alpha_power = 1.5;
 % medium.BonA = 6;
 
 % create the time array
@@ -131,14 +131,16 @@ input_signal = createCWSignals(kgrid.t_array, transducer.source_freq_hz, transdu
 
 source.p = zeros(length(p_mask_source_p),length(input_signal));
 
-for ii = 1 : length(p_mask_source_p)
-    source.p(ii, :) = input_signal(p_mask_source_p(ii), :);
+for i = 1 : length(p_mask_source_p)
+    source.p(i, :) = input_signal(p_mask_source_p(i), :);
 end
 
 
 % set the input settings
-input_args = {'PMLInside', false, 'PlotPML', false, 'DisplayMask', source.p_mask, ...
-    'DataCast', DATA_CAST, 'DataRecast', true, 'PlotScale', [-1/2, 1/2] * transducer.source_amp(1)};
+% input_args = {'PMLInside', true, 'PlotPML', false, 'DisplayMask', source.p_mask, ...
+%     'DataCast', DATA_CAST, 'DataRecast', true, 'PlotScale', [-1/2, 1/2] * transducer.source_amp(1)};
+input_args = {'PMLInside', true, 'PlotPML', false, 'DisplayMask', source.p_mask, ...
+    'PlotScale', [-1/2, 1/2] * transducer.source_amp(1)};
 
 % run the simulation
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});

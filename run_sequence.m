@@ -75,8 +75,9 @@ bowl_coords_mm =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1
 transducer_angle
 
 % Get electrical params
-focus_depth_mm = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)) % mm
+focus_depth_mm = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)); % mm
 [pressure, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+focus_depth_mm_NeuroFUS = focus_depth_mm - 13 % Distance to device face
 % [pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth_mm, isppa_device)
 
 %% Run simulation and store results in output_dir
