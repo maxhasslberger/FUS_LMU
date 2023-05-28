@@ -29,10 +29,18 @@ thermal_sim = false;
 % Transducer param
 transducer = 'CTX500';
 
-% focus_coords_mm_orig = [-27, -21, 40]; % mm
-% focus_coords_mm_orig = [-41, -16, 59]; % mm
-% focus_coords_mm_orig = [-41, -6, 39]; % mm
-focus_coords_mm_orig = [-25, -21, 7]; % mm
+% focus_coords_mm_orig = [-27, -21, 40]; % theresa
+% focus_coords_mm_orig = [-27, -21, 40]; % theresa new
+% focus_coords_mm_orig = [61, 30, 23]; % theresa des
+% focus_coords_mm_orig = [-41, -16, 59]; % boris
+% focus_coords_mm_orig = [-29, -22, 65]; % boris des
+% focus_coords_mm_orig = [-41, -6, 39]; % 001
+% focus_coords_mm_orig = [-25, -20, 7]; % 005
+% focus_coords_mm_orig = [-32, -15, 2]; % 005 new
+focus_coords_mm_orig = [63, 39, 27]; % 005 des
+
+% Convert to structural MRI
+focus_coords_mm_orig = round(circshift(focus_coords_mm_orig .* [1, -1, -1], 2) * 0.82);
 
 % Std to structural MRI
 % focus_coords_mm_orig = 
@@ -68,11 +76,15 @@ focus_coords = focus_coords_mm * 1e-3 ./ dxyz;
 
 
 %% Tranducer positioning
-[bowl_coords, transducer_angle] = get_transducer_position(medium, focus_coords_rel);
+bowl_coord_axis = [132, 125, 145];
+% bowl_coord_axis = [129, 128, 128];
+% bowl_coord_axis = [-1, 128, 128];
+[bowl_coords, transducer_angle, add_offset] = get_transducer_position(medium, focus_coords_rel, bowl_coord_axis);
 bowl_coords = bowl_coords + (focus_coords - focus_coords_rel);
 bowl_coords_mm =  ((bowl_coords / 1e-3 .* dxyz) - [192, 256, 256] / 2) .* [-1, 1, 1]; % mm
 
 transducer_angle
+add_offset
 
 % Get electrical params
 focus_depth_mm = floor(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)); % mm
