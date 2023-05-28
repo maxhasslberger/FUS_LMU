@@ -54,8 +54,6 @@ kgrid.makeTime(medium.sound_speed);
 transducer.n_elements = 4; % number of elements in the transducer
 transducer.Elements_ID_mm = [0, 32.9184, 46.1264, 56.0324];
 transducer.Elements_OD_mm = [32.3596, 45.5676, 55.5244, 64.008];
-% transducer.center_element = [1, 420, 347, 277];
-transducer.center_element = [1, 1, 1, 1];
 transducer.curv_radius_mm = 63.20; % radius of curvature of the bowl 
 transducer.dist_to_plane_mm = 52.38; % distance to the transducer plane from the geometric focus
 % [Pa] (72850 calibrated values at 30 W/cm^2 free-water Isppa, 84250 at 40 W/cm^2, 94100 for 50 W/cm^2)
@@ -102,8 +100,8 @@ input_args = {'PMLInside', false, 'PlotPML', false, ...
     'PlotScale', [-1/20, 1/20] * source_mag};
 
 % run the simulation
-% sensor_signal = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
-sensor_signal = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
+sensor_signal = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+% sensor_signal = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
 % sensor_signal = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
 %% Avg Phase correction
@@ -124,7 +122,8 @@ phase = nan(1, transducer.n_elements);
 for i = 1:transducer.n_elements
 %     phase(i) = mean(all_phases(mask_sensor_p == i));
     phase_elements = all_phases(mask_sensor_p == i);
-    phase(i) = phase_elements(transducer.center_element(i));
+    phase_idx = round(length(phase_elements) / 2);
+    phase(i) = phase_elements(phase_idx);
 end
 
 phase = (phase - phase(1)) /pi*180; % Ref element 1 = 0°
