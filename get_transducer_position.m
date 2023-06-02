@@ -1,4 +1,4 @@
-function [bowl_coords, opt_angle, skull_offset] = get_transducer_position(medium, focus_coords, bowl_coord_conn)
+function [bowl_coords, opt_angle, skull_offset, add_offset] = get_transducer_position(medium, focus_coords, bowl_coord_conn)
 
 if all(bowl_coord_conn > 0)
     % Manual coordinate axis input
@@ -66,13 +66,20 @@ end
 end
 
 % Find point near the skull
-min_offset = 13 + 5; % distance plane to transducer face + (hair + min. gel pad thickness) (=> mm)
-min_NeuroFUS_fd = 13 + 34; % (=> mm)
+t_face_dis = 13;
+min_offset = t_face_dis + 11.5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)
+add_offset = 13;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
+
+% 003
+% min_offset = t_face_dis + 11.5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)
+% add_offset = 13;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
+
+min_NeuroFUS_fd = t_face_dis + 34 + add_offset; % (=> mm)
 out_skull_idx = find(sound_speed > thr, 1, 'last');
 
 % voxelPlot(double(medium.sound_speed > 1500 | vec_path));
 
-bowl_coords = round(coordinates(out_skull_idx, :) + min_offset * coord_vec / norm(coord_vec));
+bowl_coords = round(coordinates(out_skull_idx, :) + (min_offset+add_offset) * coord_vec / norm(coord_vec));
 
 focus_depth_tmp = norm(focus_coords - bowl_coords);
 if min_NeuroFUS_fd > focus_depth_tmp
@@ -82,7 +89,7 @@ if min_NeuroFUS_fd > focus_depth_tmp
 else
     skull_offset = min_offset;
 end
-skull_offset = skull_offset - 13;
+skull_offset = skull_offset + add_offset - t_face_dis - 3;
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords(2), :) > thr));

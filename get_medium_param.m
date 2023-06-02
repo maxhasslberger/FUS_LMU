@@ -34,7 +34,7 @@ input_ct = niftiread(ct_filename);
 % t1_img = niftiread(t1_filename);
 % header = niftiinfo(ct_filename);
 input_ct = double(input_ct);
-size(input_ct)
+input_ct = flip(input_ct, 1); % mirror x axis for voxel space
 
 voxelPlot(double(input_ct > 1500));
 
