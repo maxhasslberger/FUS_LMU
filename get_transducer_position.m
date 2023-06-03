@@ -67,8 +67,8 @@ end
 
 % Find point near the skull
 t_face_dis = 13;
-min_offset = t_face_dis + 11.5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)
-add_offset = 13;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
+min_offset = t_face_dis + 5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)
+add_offset = 1.5;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
 
 % 003
 % min_offset = t_face_dis + 11.5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)

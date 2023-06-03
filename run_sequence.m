@@ -24,7 +24,7 @@ t1_filename = fullfile(filepath, 'FUN0007T1_T1w_MPRAGE_t1_20230525161748_11.nii'
 % ct_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9_pct.nii');
 % ct_filename = fullfile(filepath, 'FUN0003t1_T1w_MPRAGE_t1_20230520133911_9_pct.nii');
 % ct_filename = fullfile(filepath, 'FUN0005t1_T1w_pseudoCT.nii');
-ct_filename = fullfile(filepath, 'FUN0007T1_T1w_MPRAGE_t1_20230525161748_11_pct.nii');
+ct_filename = fullfile(filepath, 'FUN0007T1_T1w_MPRAGE_t1_20230525161748_11pct.nii');
 
 output_dir = fullfile('../Results');
 
@@ -46,17 +46,20 @@ transducer = 'CTX500';
 % focus_coords_mm_orig = [-17, -13, 25]; % 003 sham
 % focus_coords_mm_orig = [-25, -22, 6]; % 005
 % focus_coords_mm_orig = [-13, -20, -40]; % 005 sham
-focus_coords_mm_orig = [-25, -22, 6]; % 007%%%%%
-% focus_coords_mm_orig = [-13, -20, -40]; % 007 sham
+% focus_coords_mm_orig = [-29, -5, 56]; % 007
+focus_coords_mm_orig = [-29, -5, 56]; % 007 sham
 
 % offset = [96, 126, 126]; % 001
 % offset = [96, 127, 126]; % 003
 % offset = [96, 113, 168]; % 005
 offset = [96, 114, 127]; % 007
 
+bowl_coord_axis_origin = [-59, -13, 93]; % 007
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Coordinate transformation into matlab space
 focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + offset;
+bowl_coord_axis = bowl_coord_axis_origin .* [-1, 1, 1] + offset;
 
 % Convert into kgrid space
 dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
@@ -85,10 +88,11 @@ stim_dur = 80; % s
 % Get grid and medium
 [medium, focus_coords_rel, input_ct] = get_medium_param(ct_filename, focus_coords);
 
+bowl_coord_axis = bowl_coord_axis - (focus_coords - focus_coords_rel);
 
 %% Tranducer positioning
-bowl_coord_axis = [132, 127, 133]; % 001, 003, 005
-% bowl_coord_axis = [-1, 128, 128];
+% bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007
+% bowl_coord_axis = [-1, 128, 128]; % Find angle
 [bowl_coords, transducer_angle, skull_offset_mm, add_offset] = get_transducer_position(medium, focus_coords_rel, bowl_coord_axis);
 bowl_coords = bowl_coords + (focus_coords - focus_coords_rel);
 bowl_coords_mm = ((bowl_coords / 1e-3 .* dxyz) - offset) .* [-1, 1, 1] % mm
