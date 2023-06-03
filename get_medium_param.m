@@ -36,11 +36,11 @@ input_ct = niftiread(ct_filename);
 input_ct = double(input_ct);
 input_ct = flip(input_ct, 1); % mirror x axis for voxel space
 
-voxelPlot(double(input_ct > 1500));
+% voxelPlot(double(input_ct > 1500));
 
 focus_space = zeros(size(input_ct));
 focus_space(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
-voxelPlot(double(input_ct > 1500 | focus_space));
+% voxelPlot(double(input_ct > 1500 | focus_space));
 
 figure;
 imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));
