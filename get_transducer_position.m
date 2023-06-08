@@ -76,7 +76,7 @@ min_offset = t_face_dis + min_pad_offset + hair_offset; % distance plane to tran
 % add_offset = 13;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
 
 min_NeuroFUS_fd = t_face_dis + 34 + add_offset;
-max_NeuroFUS_fd = t_face_dis + 69 + add_offset;
+max_NeuroFUS_fd = t_face_dis + 67 + add_offset;
 out_skull_idx = find(sound_speed > thr, 1, 'last');
 
 % voxelPlot(double(medium.sound_speed > 1500 | vec_path));
@@ -97,7 +97,8 @@ else
 end
 pad_offset = pad_offset + add_offset;
 
-focus_depth = round(norm(focus_coords_rel - bowl_coords_rel)-add_offset);
+focus_depth = min(max(round(norm(focus_coords_rel - bowl_coords_rel)-add_offset)...
+    , min_NeuroFUS_fd-add_offset), max_NeuroFUS_fd-add_offset);
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords_rel(2), :) > thr));

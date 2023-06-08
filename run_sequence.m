@@ -7,13 +7,16 @@ clear;
 % % subj_id = 'boris';
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0003';
+% subj_id = 'FUN0004';
 % subj_id = 'FUN0005';
+% subj_id = 'FUN0006';
 % subj_id = 'FUN0007';
+subj_id = 'FUN0009';
 % subj_id = 'FUN0010';
 % subj_id = 'FUN0011';
-subj_id = 'FUN0012';
+% subj_id = 'FUN0012';
 
-sham_cond = true;
+sham_cond = false;
 
 % Simulation options
 acoustic_sim = true;
@@ -54,6 +57,22 @@ elseif strcmp(subj_id, 'FUN0003')
 
     offset = [96, 127, 126]; % 003
 
+elseif strcmp(subj_id, 'FUN0004')
+
+    t1_filename = fullfile(filepath, 'FUN0004t1_T1w_MPRAGE_t1_20230520152450_9.nii');
+    ct_filename = fullfile(filepath, 'FUN0004t1_T1w_MPRAGE_t1_20230520152450_9_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-37, -5, 17]; % real
+    focus_coords_mm_orig = [-34, -5, 17]; % real
+    else
+    focus_coords_mm_orig = [-9, -12, 24];
+    pressure = 42272;
+    end
+
+    offset = [96, 127, 126];
+    bowl_coord_axis_origin = [-50, -10, 67];
+
 elseif strcmp(subj_id, 'FUN0005')
 
     t1_filename = fullfile(filepath, 'FUN0005t1_T1w_MPRAGE_t1.nii');
@@ -67,6 +86,22 @@ elseif strcmp(subj_id, 'FUN0005')
     end
 
     offset = [96, 113, 168]; % 005
+
+elseif strcmp(subj_id, 'FUN0006')
+
+    t1_filename = fullfile(filepath, 'FUN0006t1_T1w_MPRAGE_t1.nii');
+    ct_filename = fullfile(filepath, 'FUN0006t1_T1w_MPRAGE_t1_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-24, -22, 6]; % real
+    focus_coords_mm_orig = [-21, -22, 6]; % real
+    else
+    focus_coords_mm_orig = [-30, -10, -16];
+    pressure = 42272;
+    end
+
+    offset = [96, 114, 168];
+    bowl_coord_axis_origin = [-36, -37, 53];
 
 elseif strcmp(subj_id, 'FUN0007')
 
@@ -83,6 +118,22 @@ elseif strcmp(subj_id, 'FUN0007')
     offset = [96, 114, 127]; % 007
     bowl_coord_axis_origin = [-59, -13, 93]; % 007
 
+elseif strcmp(subj_id, 'FUN0009')
+
+    t1_filename = fullfile(filepath, 'FUN0009t1_mprage_T1w_MPRAGE_t1_20230601151318_10.nii');
+    ct_filename = fullfile(filepath, 'FUN0009t1_mprage_T1w_MPRAGE_t1_20230601151318_10pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-33, -4, 28]; % real
+    focus_coords_mm_orig = [-29, -4, 28]; % real
+    else
+    focus_coords_mm_orig = [-9, -12, 24];
+    pressure = 42272;
+    end
+
+    offset = [99, 116, 142];
+    bowl_coord_axis_origin = [-61, -12, 76];
+
 elseif strcmp(subj_id, 'FUN0010')
 
     t1_filename = fullfile(filepath, 'FUN0010_T1W_MPRAGE_T1_0010_T1w_MPRAGE_t1_20230603074612_10.nii');
@@ -90,14 +141,14 @@ elseif strcmp(subj_id, 'FUN0010')
 
     if ~sham_cond
     focus_coords_mm_orig = [-34, -15, 60]; % real
-    focus_coords_mm_orig = [-30, -15, 64]; % real
+    focus_coords_mm_orig = [-34, -15, 64]; % real
     else
-    focus_coords_mm_orig = [-29, -5, 00];
-    pressure = 45000;
+    focus_coords_mm_orig = [-9, -12, 24];
+    pressure = 42272;
     end
 
     offset = [96, 127, 126];
-    bowl_coord_axis_origin = [-0, -0, 0];
+    bowl_coord_axis_origin = [-56, -22, 111];
 
 elseif strcmp(subj_id, 'FUN0011')
 
@@ -105,14 +156,14 @@ elseif strcmp(subj_id, 'FUN0011')
     ct_filename = fullfile(filepath, 'FUN0011T1_T1w.nii_pct.nii');
 
     if ~sham_cond
-    focus_coords_mm_orig = [-29, -5, 56];
+    focus_coords_mm_orig = [-39, -22, 52];
     else
-    focus_coords_mm_orig = [-29, -5, 00];
-    pressure = 45000;
+    focus_coords_mm_orig = [-7, -18, 9];
+    pressure = 42272;
     end
 
     offset = [99, 121, 147];
-    bowl_coord_axis_origin = [-0, -0, 0];
+    bowl_coord_axis_origin = [-60, -27, 100];
 
 elseif strcmp(subj_id, 'FUN0012')
 
@@ -124,7 +175,7 @@ elseif strcmp(subj_id, 'FUN0012')
     focus_coords_mm_orig = [-32, -22, 38]; % real
     else
     focus_coords_mm_orig = [-1, -16, 9];
-    pressure = 45000;
+    pressure = 42272;
     end
 
     offset = [96, 126, 125];
@@ -148,10 +199,14 @@ end
 
 if ~sham_cond %%%%%%%%%%%% per subject!
     min_pad_offset = 2; % same for all
-    add_offset = 5.5; % FUN12
+    add_offset = 5.5; % FUN12, 11, 4(, 10?)  % additional offset as heterogeneous medium deforms focal spot
+    add_offset = 9.5; % FUN9
+    add_offset = 11.5; % FUN9
+%     add_offset = 5.0; % FUN6
 else
-    min_pad_offset = 12; % FUN12
-    add_offset = 10.5; % additional offset as heterogeneous medium deforms focal spot
+    min_pad_offset = 12; % FUN12, 11, 10, 9
+    add_offset = 10.5; % FUN12, 11
+%     add_offset = 14.5; % FUN10, 9
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,9 +244,13 @@ stim_dur = 80; % s
 close all;
 
 if ~sham_cond
-%     bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007 ###############
-%     bowl_coord_axis = [132, 127, 134]; % 010
-    bowl_coord_axis = [132, 127, 138]; % 012
+%     bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007 #############
+%     bowl_coord_axis = [132, 127, 136]; % 010
+    bowl_coord_axis = [132, 127, 134]; % 009
+%     bowl_coord_axis = [132, 127, 137]; % 011
+%     bowl_coord_axis = [132, 127, 138]; % 012
+%     bowl_coord_axis = [131, 125, 137]; % 006
+%     bowl_coord_axis = [131, 127, 137]; % 004
 %     bowl_coord_axis = [-1, 128, 128]; % Find angle
 else
     bowl_coord_axis = bowl_coord_axis_origin .* [-1, 1, 1] + offset;
