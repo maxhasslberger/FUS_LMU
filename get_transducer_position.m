@@ -97,8 +97,8 @@ else
 end
 pad_offset = pad_offset + add_offset;
 
-focus_depth = min(max(round(norm(focus_coords_rel - bowl_coords_rel)-add_offset)...
-    , min_NeuroFUS_fd-add_offset), max_NeuroFUS_fd-add_offset);
+focus_depth = round(min(max(norm(focus_coords_rel - bowl_coords_rel)...
+    , min_NeuroFUS_fd), max_NeuroFUS_fd) - add_offset);
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords_rel(2), :) > thr));
