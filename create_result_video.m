@@ -1,5 +1,8 @@
 
-dim = 2;
+dims = [2 1 3]; % Video dimensions (One video per cell)
+dims = 2;
+
+for dim = dims
 
 % Set up the figure and video properties
 vidObj = VideoWriter(fullfile(output_dir, [subj_id '_tussim_skull_3D_' transducer '_dim' int2str(dim) '.mp4']), 'MPEG-4');
@@ -60,3 +63,5 @@ disp('Complete!')
 
 % Close the video object
 close(vidObj);
+
+end

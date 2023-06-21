@@ -6,12 +6,14 @@ clear;
 % % subj_id = 'theresa';
 % % subj_id = 'boris';
 % subj_id = 'FUN0001';
+% subj_id = 'FUN0002';
 % subj_id = 'FUN0003';
 subj_id = 'FUN0004';
 % subj_id = 'FUN0005';
-% subj_id = 'FUN0006';
+subj_id = 'FUN0006';
 % subj_id = 'FUN0007';
 % subj_id = 'FUN0009';
+% subj_id = 'FUN0008';
 % subj_id = 'FUN0010';
 % subj_id = 'FUN0011';
 % subj_id = 'FUN0012';
@@ -42,6 +44,23 @@ if strcmp(subj_id, 'FUN0001')
     end
     
     offset = [96, 126, 126]; % 001
+
+elseif strcmp(subj_id, 'FUN0002')
+    
+    t1_filename = fullfile(filepath, 'FUN0002t1_T1w_MPRAGE_t1_20230520110230_9.nii');
+    ct_filename = fullfile(filepath, 'FUN0002t1_T1w_MPRAGE_t1_20230520110230_9_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-43, -10, 38];
+    focus_coords_mm_orig = [-42, -10, 38];
+    else
+    focus_coords_mm_orig = [-15, -17, 1];
+    pressure = 42272;
+    end
+
+    offset = [96, 112, 155];
+    bowl_coord_axis_origin = [-68, -24, 78];
+
 
 elseif strcmp(subj_id, 'FUN0003')
     
@@ -96,7 +115,8 @@ elseif strcmp(subj_id, 'FUN0006')
     focus_coords_mm_orig = [-24, -22, 6]; % real
     focus_coords_mm_orig = [-21, -22, 6]; % real
     else
-    focus_coords_mm_orig = [-30, -10, -16];
+    focus_coords_mm_orig = [-27, -10, -17];
+    focus_coords_mm_orig = [-11, -13, -31];
     pressure = 42272;
     end
 
@@ -117,6 +137,22 @@ elseif strcmp(subj_id, 'FUN0007')
 
     offset = [96, 114, 127]; % 007
     bowl_coord_axis_origin = [-59, -13, 93]; % 007
+
+elseif strcmp(subj_id, 'FUN0008')
+
+    t1_filename = fullfile(filepath, 'FUN0008t1_T1w_MPRAGE_t1.nii');
+    ct_filename = fullfile(filepath, 'FUN0008t1_T1w_MPRAGE_t1_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-31, -17, 31]; % real
+    focus_coords_mm_orig = [-30, -17, 31]; % real
+    else
+    focus_coords_mm_orig = [-19, -19, -8];
+    pressure = 42272;
+    end
+
+    offset = [94, 119, 134];
+    bowl_coord_axis_origin = [-59, -31, 73];
 
 elseif strcmp(subj_id, 'FUN0009')
 
@@ -156,7 +192,8 @@ elseif strcmp(subj_id, 'FUN0011')
     ct_filename = fullfile(filepath, 'FUN0011T1_T1w.nii_pct.nii');
 
     if ~sham_cond
-    focus_coords_mm_orig = [-39, -22, 52];
+    focus_coords_mm_orig = [-41, -17, 33];
+    focus_coords_mm_orig = [-40, -17, 46]; % two different t1 scans (change in z)!
     else
     focus_coords_mm_orig = [-7, -18, 9];
     pressure = 42272;
@@ -172,7 +209,7 @@ elseif strcmp(subj_id, 'FUN0012')
 
     if ~sham_cond
     focus_coords_mm_orig = [-34, -22, 38]; % real
-    focus_coords_mm_orig = [-32, -22, 38]; % real
+    focus_coords_mm_orig = [-33, -22, 38]; % real
     else
     focus_coords_mm_orig = [-1, -16, 9];
     pressure = 42272;
@@ -199,14 +236,16 @@ end
 
 if ~sham_cond %%%%%%%%%%%% per subject!
     min_pad_offset = 2; % same for all
-    add_offset = 5.5; % FUN12, 11, 4(, 10?)  % additional offset as heterogeneous medium deforms focal spot
-    add_offset = 9.5; % FUN9
-    add_offset = 11.5; % FUN9
+    add_offset = 5.5; % FUN12, 4, 10, 2, 8  % additional offset as heterogeneous medium deforms focal spot
+%     add_offset = 9.5; % FUN11
+%     add_offset = 11.5; % FUN9
 %     add_offset = 5.0; % FUN6
+%     add_offset = 3.; % FUN2
 else
     min_pad_offset = 12; % FUN12, 11, 10, 9
-    add_offset = 10.5; % FUN12, 11
-    add_offset = 4.5; % FUN12, 11
+    add_offset = 0; % FUN6
+%     add_offset = 5.5; % FUN6
+    add_offset = 10.5; % FUN12, 11, 2, 8
 %     add_offset = 14.5; % FUN10, 9
 end
 
@@ -247,8 +286,8 @@ close all;
 if ~sham_cond
 %     bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007 #############
 %     bowl_coord_axis = [132, 127, 136]; % 010
-    bowl_coord_axis = [132, 127, 134]; % 009
-%     bowl_coord_axis = [132, 127, 137]; % 011
+%     bowl_coord_axis = [132, 127, 134]; % 009
+    bowl_coord_axis = [132, 126, 134]; % 011, 008, 002
 %     bowl_coord_axis = [132, 127, 138]; % 012
 %     bowl_coord_axis = [131, 125, 137]; % 006
 %     bowl_coord_axis = [131, 127, 137]; % 004
@@ -256,6 +295,7 @@ if ~sham_cond
 else
     bowl_coord_axis = bowl_coord_axis_origin .* [-1, 1, 1] + offset;
     bowl_coord_axis = bowl_coord_axis - (focus_coords - focus_coords_rel);
+    bowl_coord_axis = [131, 126, 134]; % FUN0006
 end
 
 [bowl_coords_rel, transducer_angle, pad_offset_mm, focus_depth] ...
