@@ -7,16 +7,16 @@ clear;
 % % subj_id = 'boris';
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0003';
-% subj_id = 'FUN0004';
+subj_id = 'FUN0004';
 % subj_id = 'FUN0005';
 % subj_id = 'FUN0006';
 % subj_id = 'FUN0007';
-subj_id = 'FUN0009';
+% subj_id = 'FUN0009';
 % subj_id = 'FUN0010';
 % subj_id = 'FUN0011';
 % subj_id = 'FUN0012';
 
-sham_cond = false;
+sham_cond = true;
 
 % Simulation options
 acoustic_sim = true;
@@ -66,7 +66,7 @@ elseif strcmp(subj_id, 'FUN0004')
     focus_coords_mm_orig = [-37, -5, 17]; % real
     focus_coords_mm_orig = [-34, -5, 17]; % real
     else
-    focus_coords_mm_orig = [-9, -12, 24];
+    focus_coords_mm_orig = [-19, -8, -15];
     pressure = 42272;
     end
 
@@ -206,6 +206,7 @@ if ~sham_cond %%%%%%%%%%%% per subject!
 else
     min_pad_offset = 12; % FUN12, 11, 10, 9
     add_offset = 10.5; % FUN12, 11
+    add_offset = 4.5; % FUN12, 11
 %     add_offset = 14.5; % FUN10, 9
 end
 
