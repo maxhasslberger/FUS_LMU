@@ -10,6 +10,7 @@ vidObj.FrameRate = 10; % Adjust the frame rate as desired
 open(vidObj);
 
 numFrames = size(t1_img, dim);
+t1_img = flip(t1_img, 1);
 
 if dim == 1
     order = [1 2 3];

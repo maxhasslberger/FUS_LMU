@@ -8,15 +8,17 @@ clear;
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0002';
 % subj_id = 'FUN0003';
-subj_id = 'FUN0004';
+% subj_id = 'FUN0004';
 % subj_id = 'FUN0005';
-subj_id = 'FUN0006';
+% subj_id = 'FUN0006';
 % subj_id = 'FUN0007';
 % subj_id = 'FUN0009';
 % subj_id = 'FUN0008';
 % subj_id = 'FUN0010';
 % subj_id = 'FUN0011';
 % subj_id = 'FUN0012';
+% subj_id = 'FUN0013';
+subj_id = 'FUN0014';
 
 sham_cond = true;
 
@@ -40,7 +42,7 @@ if strcmp(subj_id, 'FUN0001')
     focus_coords_mm_orig = [-41, -16, 59]; % 001
     else
     focus_coords_mm_orig = [-8, -15, 21]; % 001 sham
-    pressure = 45000;
+    pressure = 42272;
     end
     
     offset = [96, 126, 126]; % 001
@@ -70,11 +72,12 @@ elseif strcmp(subj_id, 'FUN0003')
     if ~sham_cond
     focus_coords_mm_orig = [-43, -10, 64]; % 003
     else
-    focus_coords_mm_orig = [-17, -13, 25]; % 003 sham
-    pressure = 45000;
+    focus_coords_mm_orig = [-13, -10, 26]; % 003 sham
+    pressure = 42272;
     end
 
     offset = [96, 127, 126]; % 003
+    bowl_coord_axis_origin = [-73, -18, 101];
 
 elseif strcmp(subj_id, 'FUN0004')
 
@@ -218,6 +221,38 @@ elseif strcmp(subj_id, 'FUN0012')
     offset = [96, 126, 125];
     bowl_coord_axis_origin = [-52, -26, 86];
 
+elseif strcmp(subj_id, 'FUN0013')
+
+    t1_filename = fullfile(filepath, 'FUN0013T1_T1w_MPRAGE_.nii');
+    ct_filename = fullfile(filepath, 'FUN0013T1_T1w_MPRAGE_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-40, 14, 54]; % real
+    focus_coords_mm_orig = [-39, 14, 54]; % real
+    else
+    focus_coords_mm_orig = [-16, 5, 26];
+    pressure = 42272;
+    end
+
+    offset = [96, 127, 127];
+    bowl_coord_axis_origin = [-67, 0, 96];
+
+elseif strcmp(subj_id, 'FUN0014')
+
+    t1_filename = fullfile(filepath, 'FUN0014T1_FUN0014T1_T1w_MPRAGE_t1_20230620172460_10.nii');
+    ct_filename = fullfile(filepath, 'FUN0014T1_T1w_MPRAGE_t1_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-36, -4, 37]; % real
+    focus_coords_mm_orig = [-35, -4, 37]; % real
+    else
+    focus_coords_mm_orig = [-10, -9, 9];
+    pressure = 42272;
+    end
+
+    offset = [96, 127, 127];
+    bowl_coord_axis_origin = [-63, -18, 79];
+
 % elseif strcmp(subj_id, 'boris')
 % 
 %     t1_filename = fullfile(filepath, 'boris_t1w.nii');
@@ -243,21 +278,25 @@ if ~sham_cond %%%%%%%%%%%% per subject!
 %     add_offset = 3.; % FUN2
 else
     min_pad_offset = 12; % FUN12, 11, 10, 9
-    add_offset = 0; % FUN6
+%     add_offset = 0; % FUN6
 %     add_offset = 5.5; % FUN6
-    add_offset = 10.5; % FUN12, 11, 2, 8
+%     add_offset = 10.5; % FUN12, 11, 2, 8
+    add_offset = 7.5; % FUN13
+    add_offset = 4.5; % FUN13
 %     add_offset = 14.5; % FUN10, 9
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+adj_vec = [1, 1, 1];
+
 % Coordinate transformation into matlab space
-focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + offset;
+focus_coords_mm = focus_coords_mm_orig .* adj_vec + offset;
 
 % Convert into kgrid space
 dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
 % bowl_coords = bowl_coords_mm * 1e-3 ./ dxyz;
-% focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + [192, 256, 256] / 2;
+% focus_coords_mm = focus_coords_mm_orig .* adj_vec + [192, 256, 256] / 2;
 focus_coords = focus_coords_mm * 1e-3 ./ dxyz;
 
 pulse_length = 20e-3; % s
@@ -278,7 +317,7 @@ stim_dur = 80; % s
 
 
 % Get grid and medium
-[medium, focus_coords_rel, input_ct] = get_medium_param(ct_filename, focus_coords);
+[medium, focus_coords_rel, input_ct] = get_medium_param(t1_filename, ct_filename, focus_coords);
 
 %% Tranducer positioning and param
 close all;
@@ -287,22 +326,22 @@ if ~sham_cond
 %     bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007 #############
 %     bowl_coord_axis = [132, 127, 136]; % 010
 %     bowl_coord_axis = [132, 127, 134]; % 009
-    bowl_coord_axis = [132, 126, 134]; % 011, 008, 002
+    bowl_coord_axis = [132, 126, 134]; % 011, 008, 002, 13, 14
 %     bowl_coord_axis = [132, 127, 138]; % 012
 %     bowl_coord_axis = [131, 125, 137]; % 006
 %     bowl_coord_axis = [131, 127, 137]; % 004
 %     bowl_coord_axis = [-1, 128, 128]; % Find angle
 else
-    bowl_coord_axis = bowl_coord_axis_origin .* [-1, 1, 1] + offset;
+    bowl_coord_axis = bowl_coord_axis_origin .* adj_vec + offset;
     bowl_coord_axis = bowl_coord_axis - (focus_coords - focus_coords_rel);
-    bowl_coord_axis = [131, 126, 134]; % FUN0006
+%     bowl_coord_axis = [131, 126, 134]; % FUN0006
 end
 
 [bowl_coords_rel, transducer_angle, pad_offset_mm, focus_depth] ...
     = get_transducer_position(medium, focus_coords_rel, bowl_coord_axis, min_pad_offset, add_offset);
 
 bowl_coords = bowl_coords_rel + (focus_coords - focus_coords_rel);
-bowl_coords_mm = ((bowl_coords / 1e-3 .* dxyz) - offset) .* [-1, 1, 1] % mm
+bowl_coords_mm = ((bowl_coords / 1e-3 .* dxyz) - offset) .* adj_vec % mm
 
 focus_depth_mm = focus_depth / 1e-3 * dxyz(1); % mm
 focus_depth_mm_NeuroFUS = focus_depth_mm - 13 % Distance to device face
