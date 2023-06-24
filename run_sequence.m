@@ -20,7 +20,7 @@ clear;
 % subj_id = 'FUN0013';
 subj_id = 'FUN0014';
 
-sham_cond = true;
+sham_cond = false;
 
 % Simulation options
 acoustic_sim = true;
@@ -244,7 +244,7 @@ elseif strcmp(subj_id, 'FUN0014')
 
     if ~sham_cond
     focus_coords_mm_orig = [-36, -4, 37]; % real
-    focus_coords_mm_orig = [-35, -4, 37]; % real
+    focus_coords_mm_orig = [-34, -4, 37]; % real
     else
     focus_coords_mm_orig = [-10, -9, 9];
     pressure = 42272;
@@ -323,13 +323,13 @@ stim_dur = 80; % s
 close all;
 
 if ~sham_cond
-%     bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007 #############
-%     bowl_coord_axis = [132, 127, 136]; % 010
-%     bowl_coord_axis = [132, 127, 134]; % 009
-    bowl_coord_axis = [132, 126, 134]; % 011, 008, 002, 13, 14
-%     bowl_coord_axis = [132, 127, 138]; % 012
-%     bowl_coord_axis = [131, 125, 137]; % 006
-%     bowl_coord_axis = [131, 127, 137]; % 004
+%     bowl_coord_axis = [124, 127, 133]; % 001, 003, 005, 007 #############
+%     bowl_coord_axis = [124, 127, 136]; % 010
+%     bowl_coord_axis = [124, 127, 134]; % 009
+    bowl_coord_axis = [124, 126, 134]; % 011, 008, 002, 13, 14
+%     bowl_coord_axis = [124, 127, 138]; % 012
+%     bowl_coord_axis = [125, 125, 137]; % 006
+%     bowl_coord_axis = [125, 127, 137]; % 004
 %     bowl_coord_axis = [-1, 128, 128]; % Find angle
 else
     bowl_coord_axis = bowl_coord_axis_origin .* adj_vec + offset;

@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 45000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
+amp = 42272;%30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 % if ~exist(filename, 'file')
@@ -143,16 +143,25 @@ end
 input_args = {'PMLInside', true, 'PlotPML', false, 'DisplayMask', source.p_mask, ...
     'PlotScale', [-1/2, 1/2] * transducer.source_amp(1)};
 
-% run the simulation
-% sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
-sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
-% sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
+% % run the simulation
+% % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+% sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
+% % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
+% 
+% % compute Isppa
+% x_start = round((focus_depth-5)*1e-3/dx);
+% sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
+% [max_pressure, max_idx] = max(sensor_data.p_max(x_start:end, :), [], 'all');
+% Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
 
-% compute Isppa
-x_start = round((focus_depth-5)*1e-3/dx);
-sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
-[max_pressure, max_idx] = max(sensor_data.p_max(x_start:end, :), [], 'all');
-Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
+% % O'Neil's solution
+% velocity = amp / (max(medium.density(:)) * max(medium.sound_speed(:)));
+% p_axial_oneil = focusedAnnulusONeil(transducer.curv_radius_mm/1e3, ...
+%     [transducer.Elements_ID_mm; transducer.Elements_OD_mm]/1e3, repmat(velocity,1,length(phases)), ...
+%     phases-phases(1), transducer.source_freq_hz, medium.sound_speed(end), ...
+%     medium.density(end), (1:100)*1e-3);
+% 
+% i_axial_oneil = p_axial_oneil.^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
 lut.pressure(lut_idx) = amp_x;

@@ -11,6 +11,7 @@ open(vidObj);
 
 numFrames = size(t1_img, dim);
 t1_img = flip(t1_img, 1);
+p = flip(p, 1);
 
 if dim == 1
     order = [1 2 3];
@@ -20,6 +21,7 @@ elseif dim == 3
     order = [3 1 2];
 end
 % order = circshift(1:3, -dim+1);
+
 t1_new = permute(t1_img, order);
 p_new = permute(p, order);
 
@@ -29,8 +31,8 @@ color_limits = [0, max(p(:))*1e-6];
 % Loop over each frame and create the plot
 for frameIndex = 1:numFrames % Replace numFrames with the total number of frames in your sequence
 
-%     fig = figure;
     fig = figure('visible','off');
+%     fig = figure;
     ax1 = axes;
     imagesc(ax1, imrotate(squeeze(t1_new(frameIndex, :,:)),90), [50,500]);
 %     imagesc(ax1, imrotate(squeeze(t1_new(mx, :,:)),90), [50,500]);
