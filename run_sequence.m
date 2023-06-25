@@ -347,10 +347,12 @@ focus_depth_mm = focus_depth / 1e-3 * dxyz(1); % mm
 focus_depth_mm_NeuroFUS = focus_depth_mm - 13 % Distance to device face
 
 if ~sham_cond
-    [pressure, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+%     [pressure, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+    [pressure, phase] = generate_driving_params(focus_depth_mm, transducer); % [Pa, deg]
     pressure
 else
-    [~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+%     [~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+    [~, phase] = generate_driving_params(focus_depth_mm, transducer); % [Pa, deg]
 end
 
 % [pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth_mm, isppa_device)
