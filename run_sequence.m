@@ -286,6 +286,8 @@ else
 %     add_offset = 14.5; % FUN10, 9
 end
 
+isppa_device = 20; % W/cm^2
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 adj_vec = [1, 1, 1];
@@ -348,14 +350,12 @@ focus_depth_mm_NeuroFUS = focus_depth_mm - 13 % Distance to device face
 
 if ~sham_cond
 %     [pressure, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
-    [pressure, phase] = generate_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+    [pressure, phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
     pressure
 else
 %     [~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
-    [~, phase] = generate_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+    [~, phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
 end
-
-% [pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth_mm, isppa_device)
 
 transducer_angle
 pad_offset_mm

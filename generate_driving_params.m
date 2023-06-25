@@ -1,10 +1,11 @@
 % Generate all the files:
 % generate_driving_params(13 + (34:62), 'CTX500');
+% generate_driving_params(13 + [34, 62], 'CTX500');
 
-function [pressure, phase] = generate_driving_params(focus_depths, transducer, amp)
+function [pressure, phase] = generate_driving_params(focus_depths, transducer, isppa_device, amp)
 
 %% Create driving_param mat files
-if nargin < 3
+if nargin < 4
 %     amp = [42272, 45000];
     amp = 35000:2500:70000;
 end
