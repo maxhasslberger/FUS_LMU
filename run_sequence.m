@@ -3,7 +3,7 @@ close all;
 clear;
 
 % Select conditions
-% % subj_id = 'theresa';
+subj_id = 'theresa';
 % % subj_id = 'boris';
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0002';
@@ -18,7 +18,7 @@ clear;
 % subj_id = 'FUN0011';
 % subj_id = 'FUN0012';
 % subj_id = 'FUN0013';
-subj_id = 'FUN0014';
+% subj_id = 'FUN0014';
 
 sham_cond = false;
 
@@ -253,25 +253,43 @@ elseif strcmp(subj_id, 'FUN0014')
     offset = [96, 127, 127];
     bowl_coord_axis_origin = [-63, -18, 79];
 
-% elseif strcmp(subj_id, 'boris')
-% 
-%     t1_filename = fullfile(filepath, 'boris_t1w.nii');
-%     ct_filename = fullfile(filepath, 'boris_pct.nii');
-%     
-%     focus_coords_mm_orig = [-41, -16, 59]; % boris
-% 
-% elseif strcmp(subj_id, 'theresa')
-%     
-% 
-%     t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_t1.nii');
-%     ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_pseudoCT.nii');
-% 
-%     focus_coords_mm_orig = [-27, -21, 40]; % theresa
+elseif strcmp(subj_id, 'boris')
+
+    t1_filename = fullfile(filepath, 'boris_t1w.nii');
+    ct_filename = fullfile(filepath, 'boris_pct.nii');
+    
+    if ~sham_cond
+    focus_coords_mm_orig = [-27, -21, 40]; % real
+    focus_coords_mm_orig = [-25, -21, 40]; % real
+    else
+    focus_coords_mm_orig = [-8, -19, -1];
+    pressure = 42272;
+    end
+
+    offset = [96, 127, 127];
+    bowl_coord_axis_origin = [-0, -0, 0];
+
+elseif strcmp(subj_id, 'theresa')
+    
+
+    t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE.nii');
+    ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_pct.nii');
+
+    if ~sham_cond
+    focus_coords_mm_orig = [-27, -21, 40]; % real
+    focus_coords_mm_orig = [-27, -21, 40]; % real
+    else
+    focus_coords_mm_orig = [-8, -19, -1];
+    pressure = 42272;
+    end
+
+    offset = [96, 109, 131];
+    bowl_coord_axis_origin = [-0, -0, 0];
 end
 
 if ~sham_cond %%%%%%%%%%%% per subject!
     min_pad_offset = 2; % same for all
-    add_offset = 5.5; % FUN12, 4, 10, 2, 8  % additional offset as heterogeneous medium deforms focal spot
+    add_offset = 5.5; % FUN12, 4, 10, 2, 8, Theresa  % additional offset as heterogeneous medium deforms focal spot
 %     add_offset = 9.5; % FUN11
 %     add_offset = 11.5; % FUN9
 %     add_offset = 5.0; % FUN6
