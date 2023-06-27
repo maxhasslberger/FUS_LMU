@@ -3,8 +3,8 @@ close all;
 clear;
 
 % Select conditions
-subj_id = 'theresa';
-% % subj_id = 'boris';
+% subj_id = 'theresa';
+subj_id = 'boris';
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0002';
 % subj_id = 'FUN0003';
@@ -134,7 +134,7 @@ elseif strcmp(subj_id, 'FUN0007')
     if ~sham_cond
     focus_coords_mm_orig = [-29, -5, 56]; % 007
     else
-    focus_coords_mm_orig = [-29, -5, 00]; % 007 sham
+    focus_coords_mm_orig = [-11, -6, 9]; % 007 sham
     pressure = 42272;
     end
 
@@ -259,14 +259,14 @@ elseif strcmp(subj_id, 'boris')
     ct_filename = fullfile(filepath, 'boris_pct.nii');
     
     if ~sham_cond
-    focus_coords_mm_orig = [-27, -21, 40]; % real
-    focus_coords_mm_orig = [-25, -21, 40]; % real
+    focus_coords_mm_orig = [-41, -16, 59]; % real
+    focus_coords_mm_orig = [-40, -16, 59]; % real
     else
     focus_coords_mm_orig = [-8, -19, -1];
     pressure = 42272;
     end
 
-    offset = [96, 127, 127];
+    offset = [96, 127, 126];
     bowl_coord_axis_origin = [-0, -0, 0];
 
 elseif strcmp(subj_id, 'theresa')
@@ -293,7 +293,7 @@ if ~sham_cond %%%%%%%%%%%% per subject!
 %     add_offset = 9.5; % FUN11
 %     add_offset = 11.5; % FUN9
 %     add_offset = 5.0; % FUN6
-%     add_offset = 3.; % FUN2
+    add_offset = 3.; % FUN2, boris
 else
     min_pad_offset = 12; % FUN12, 11, 10, 9
 %     add_offset = 0; % FUN6
@@ -371,8 +371,8 @@ if ~sham_cond
     [pressure, phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
     pressure
 else
-%     [~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
-    [~, phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
+    [~, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+%     [~, phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
 end
 
 transducer_angle
