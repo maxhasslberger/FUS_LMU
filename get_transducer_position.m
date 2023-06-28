@@ -75,8 +75,8 @@ min_offset = t_face_dis + min_pad_offset + hair_offset; % distance plane to tran
 % min_offset = t_face_dis + 11.5;% distance plane to transducer face + (hair (3) + min. gel pad thickness (2)) (=> mm)
 % add_offset = 13;%1.5, 5 % additional offset as heterogeneous medium deforms focal spot
 
-min_NeuroFUS_fd = t_face_dis + 34 + add_offset;
-max_NeuroFUS_fd = t_face_dis + 67 + add_offset;
+min_NeuroFUS_fd = t_face_dis + 34;
+max_NeuroFUS_fd = t_face_dis + 67;
 out_skull_idx = find(sound_speed > thr, 1, 'last');
 
 % voxelPlot(double(medium.sound_speed > 1500 | vec_path));
@@ -85,20 +85,22 @@ bowl_coords_rel = round(coordinates(out_skull_idx, :) + (min_offset+add_offset) 
 
 focus_depth_tmp = norm(focus_coords_rel - bowl_coords_rel);
 if min_NeuroFUS_fd > focus_depth_tmp
-    pad_offset = min_NeuroFUS_fd - focus_depth_tmp;
+    pad_offset = min_NeuroFUS_fd - focus_depth_tmp + add_offset;
     bowl_coords_rel = round(bowl_coords_rel + pad_offset * coord_vec / norm(coord_vec));
     pad_offset = pad_offset + min_pad_offset;
+    focus_depth = min_NeuroFUS_fd;
 elseif max_NeuroFUS_fd < focus_depth_tmp
-    pad_offset = focus_depth_tmp - max_NeuroFUS_fd;
+%     pad_offset = focus_depth_tmp - max_NeuroFUS_fd + add_offset;
+    pad_offset = min_pad_offset;
     bowl_coords_rel = round(bowl_coords_rel - pad_offset * coord_vec / norm(coord_vec));
-    pad_offset = min_pad_offset - pad_offset;
+%     pad_offset = min_pad_offset - pad_offset;
+    focus_depth = max_NeuroFUS_fd;
 else
     pad_offset = min_pad_offset;
+    focus_depth = min(max(round(norm(focus_coords_rel - bowl_coords_rel))...
+        , min_NeuroFUS_fd), max_NeuroFUS_fd) - add_offset;
 end
 pad_offset = pad_offset + add_offset;
-
-focus_depth = round(min(max(norm(focus_coords_rel - bowl_coords_rel)...
-    , min_NeuroFUS_fd), max_NeuroFUS_fd) - add_offset);
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords_rel(2), :) > thr));
