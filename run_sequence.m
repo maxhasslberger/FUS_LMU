@@ -4,7 +4,7 @@ clear;
 
 % Select conditions
 % subj_id = 'theresa';
-% subj_id = 'boris';
+subj_id = 'boris';
 % subj_id = 'FUN0001';
 % subj_id = 'FUN0002';
 % subj_id = 'FUN0003';
@@ -12,7 +12,7 @@ clear;
 % subj_id = 'FUN0005';
 % subj_id = 'FUN0006';
 % subj_id = 'FUN0007';
-subj_id = 'FUN0009';
+% subj_id = 'FUN0009';
 % subj_id = 'FUN0008';
 % subj_id = 'FUN0010';
 % subj_id = 'FUN0011';
@@ -262,18 +262,18 @@ elseif strcmp(subj_id, 'boris')
     focus_coords_mm_orig = [-41, -16, 59]; % real
     focus_coords_mm_orig = [-40, -16, 59]; % real
     else
-    focus_coords_mm_orig = [-8, -19, -1];
+    focus_coords_mm_orig = [-13, -18, 12];
     pressure = 42272;
     end
 
     offset = [96, 127, 126];
-    bowl_coord_axis_origin = [-0, -0, 0];
+    bowl_coord_axis_origin = [-66, -30, 100];
 
 elseif strcmp(subj_id, 'theresa')
     
 
-    t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE.nii');
-    ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_pct.nii');
+    t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_t1.nii');
+    ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_pseudoCT.nii');
 
     if ~sham_cond
     focus_coords_mm_orig = [-27, -21, 40]; % real
@@ -284,7 +284,7 @@ elseif strcmp(subj_id, 'theresa')
     end
 
     offset = [96, 109, 131];
-    bowl_coord_axis_origin = [-0, -0, 0];
+    bowl_coord_axis_origin = [-56, -34, 82];
 end
 
 if ~sham_cond %%%%%%%%%%%% per subject!
@@ -293,14 +293,15 @@ if ~sham_cond %%%%%%%%%%%% per subject!
 %     add_offset = 9.5; % FUN11
 %     add_offset = 11.5; % FUN9
 %     add_offset = 5.0; % FUN6
-    add_offset = 3.; % FUN2, boris
+    add_offset = 3.; % FUN2, boris, theresa
 else
     min_pad_offset = 12; % FUN12, 11, 10, 9
 %     add_offset = 0; % FUN6
 %     add_offset = 5.5; % FUN6
 %     add_offset = 10.5; % FUN12, 11, 2, 8
-    add_offset = 7.5; % FUN13
-    add_offset = 4.5; % FUN13
+%     add_offset = 7.5; % theresa2
+    add_offset = 4.5; % FUN13, boris, theresa
+    add_offset = 1.; % boris2
 %     add_offset = 14.5; % FUN10, 9
 end
 
