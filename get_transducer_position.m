@@ -85,9 +85,8 @@ out_skull_idx = find(sound_speed > thr, 1, 'last');
 unit_c_vec = coord_vec / norm(coord_vec);
 
 bowl_coords_rel = round(coordinates(out_skull_idx, :) + min_offset * unit_c_vec);
-% bowl_coords_rel_real = round(bowl_coords_rel + add_offset * unit_c_vec);
-
 focus_depth_tmp = norm(focus_coords_rel - bowl_coords_rel);
+
 if min_NeuroFUS_fd > focus_depth_tmp
     pad_offset = min_NeuroFUS_fd - focus_depth_tmp; % add gel pad to yield transducer min. focus depth
     bowl_coords_rel = round(bowl_coords_rel + pad_offset * unit_c_vec);
@@ -104,6 +103,7 @@ else
 %         , min_NeuroFUS_fd), max_NeuroFUS_fd);
 end
 pad_offset = pad_offset + add_offset;
+bowl_coords_rel = round(bowl_coords_rel + add_offset * unit_c_vec);
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords_rel(2), :) > thr));
