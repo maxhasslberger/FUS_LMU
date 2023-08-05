@@ -1,6 +1,6 @@
 % Generate all the files:
-% generate_driving_params(13 + (34:62), 'CTX500', 0);
-% generate_driving_params(13 + [34, 62], 'CTX500', 0);
+% generate_driving_params(13 + (34:67), 'CTX500', 0);
+% generate_driving_params(13 + [34, 67], 'CTX500', 0);
 
 function [pressure, phase] = generate_driving_params(focus_depths, transducer, isppa_device, amp)
 

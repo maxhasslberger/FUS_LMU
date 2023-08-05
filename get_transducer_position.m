@@ -81,24 +81,27 @@ out_skull_idx = find(sound_speed > thr, 1, 'last');
 
 % voxelPlot(double(medium.sound_speed > 1500 | vec_path));
 
-bowl_coords_rel = round(coordinates(out_skull_idx, :) + (min_offset+add_offset) * coord_vec / norm(coord_vec));
+
+unit_c_vec = coord_vec / norm(coord_vec);
+
+bowl_coords_rel = round(coordinates(out_skull_idx, :) + min_offset * unit_c_vec);
+% bowl_coords_rel_real = round(bowl_coords_rel + add_offset * unit_c_vec);
 
 focus_depth_tmp = norm(focus_coords_rel - bowl_coords_rel);
 if min_NeuroFUS_fd > focus_depth_tmp
-    pad_offset = min_NeuroFUS_fd - focus_depth_tmp + add_offset;
-    bowl_coords_rel = round(bowl_coords_rel + pad_offset * coord_vec / norm(coord_vec));
+    pad_offset = min_NeuroFUS_fd - focus_depth_tmp; % add gel pad to yield transducer min. focus depth
+    bowl_coords_rel = round(bowl_coords_rel + pad_offset * unit_c_vec);
     pad_offset = pad_offset + min_pad_offset;
     focus_depth = min_NeuroFUS_fd;
-elseif max_NeuroFUS_fd < focus_depth_tmp
-%     pad_offset = focus_depth_tmp - max_NeuroFUS_fd + add_offset;
-    pad_offset = min_pad_offset;
-    bowl_coords_rel = round(bowl_coords_rel - pad_offset * coord_vec / norm(coord_vec));
-%     pad_offset = min_pad_offset - pad_offset;
-    focus_depth = max_NeuroFUS_fd;
+% elseif max_NeuroFUS_fd < focus_depth_tmp
+%     pad_offset = min_pad_offset;
+% %     bowl_coords_rel = round(coordinates(out_skull_idx, :) + min_offset * unit_c_vec);
+%     focus_depth = max_NeuroFUS_fd;
 else
     pad_offset = min_pad_offset;
-    focus_depth = min(max(round(norm(focus_coords_rel - bowl_coords_rel))...
-        , min_NeuroFUS_fd), max_NeuroFUS_fd) - add_offset;
+    focus_depth = min(round(focus_depth_tmp), max_NeuroFUS_fd);
+%     focus_depth = min(max(round(norm(focus_coords_rel - bowl_coords_rel))...
+%         , min_NeuroFUS_fd), max_NeuroFUS_fd);
 end
 pad_offset = pad_offset + add_offset;
 
