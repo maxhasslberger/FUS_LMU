@@ -5,9 +5,9 @@ clear;
 % Select conditions
 % subj.id = 'FUNtest01';
 % subj.id = 'FUN0000';
-% subj.id = 'FUN0001';
+subj.id = 'FUN0001';
 % subj.id = 'FUN0002';
-subj.id = 'FUN0003';
+% subj.id = 'FUN0003';
 % subj.id = 'FUN0004';
 % subj.id = 'FUN0005';
 % subj.id = 'FUN0006';
@@ -19,10 +19,12 @@ subj.id = 'FUN0003';
 % subj.id = 'FUN0012';
 % subj.id = 'FUN0013';
 % subj.id = 'FUN0014';
+% subj.id = 'FUN0017';
 
-explorative_sim = false;
-condition = "real"; % If first simulation: -> First real, then sham!
-% condition = "sham";
+
+explorative_sim = true;
+% condition = "real"; % If first simulation: -> First real, then sham!
+condition = "sham";
 
 % Simulation options
 acoustic_sim = true;
@@ -41,14 +43,14 @@ subj_filename = fullfile('subject_init_params/', strcat(subj.id, "_", condition,
 if ~exist(subj_filename, 'file') || explorative_sim
 %% Modify params
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    subj.t1_filename = fullfile(filepath, 'FUN0003t1_T1w_MPRAGE_t1_20230520133911_9.nii');
-    subj.ct_filename = fullfile(filepath, 'FUN0003t1_T1w_MPRAGE_t1_20230520133911_9_pct.nii');
+    subj.t1_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9.nii');
+    subj.ct_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9_pct.nii');
 
-    subj.offset = [96, 127, 126];
+    subj.offset = [96, 126, 126];
 
     % Explorative params
-    expl.focus_coords_mm_orig = [-13, -10, 26]; % Desired FT or sham focus position - adjust for large diffractions introduced by the skull
-    expl.min_pad_offset = 10; % min. pad offset (added to hair offset (~3 mm))
+    expl.focus_coords_mm_orig = [-8, -15, 21]; % Desired FT or sham focus position - adjust for large diffractions introduced by the skull
+    expl.min_pad_offset = 6; % min. pad offset (added to hair offset (~3 mm))
     expl.add_offset = 0; % additional pad offset after focus_depth computation
 
     expl.bowl_coord_axis = [124, 127, 133]; % Adjust relative bowl position (focus at (128, 128, 128))
