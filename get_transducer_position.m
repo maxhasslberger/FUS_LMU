@@ -10,7 +10,7 @@ if all(bowl_coord_axis > 0)
 else
     % offsets optimized for M1
     phi_var = (0 + (-10:5:10)) /180*pi;
-    theta_var = (45 + (-20:5:20)) /180*pi;
+    theta_var = (-45 + (-20:5:20)) /180*pi;
 end
 
 thr = 1500; % sound speed threshold (=> water)
@@ -104,6 +104,7 @@ else
 end
 pad_offset = pad_offset + add_offset;
 bowl_coords_rel = round(bowl_coords_rel + add_offset * unit_c_vec);
+
 
 % Plot 2D views
 img1 = double(squeeze(medium.sound_speed(:, focus_coords_rel(2), :) > thr));
