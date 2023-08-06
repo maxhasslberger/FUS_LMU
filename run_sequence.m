@@ -20,9 +20,9 @@ subj.id = 'FUN0003';
 % subj.id = 'FUN0013';
 % subj.id = 'FUN0014';
 
-explorative_sim = true;
-% condition = "real"; % If first simulation: -> First real, then sham!
-condition = "sham";
+explorative_sim = false;
+condition = "real"; % If first simulation: -> First real, then sham!
+% condition = "sham";
 
 % Simulation options
 acoustic_sim = true;
