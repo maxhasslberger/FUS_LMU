@@ -193,14 +193,14 @@ classdef simulationApp < matlab.apps.AppBase
 
             % Get grid and medium
             close all;
-            [medium, focus_coords_rel, ~] = get_medium_param(subj.t1_filename, subj.ct_filename, subj.focus_coords);
+            [medium, focus_coords_rel, ~] = get_medium_param(subj.t1_filename, subj.ct_filename, subj.focus_coords, ~app.save_subject);
         
             %% Tranducer positioning and param
 %             close all;
         
             sham_cond = app.RealSham.Value == "sham";
             if sham_cond
-                subj_filename_real = fullfile('subject_init_params/', strcat(subj.id, '_real.mat'));
+                subj_filename_real = fullfile('subject_init_params/', strcat(app.SubjectNameEditField.Value, '_real.mat'));
                 subj_real = load(subj_filename_real, 'subj');
         
                 subj.expl.bowl_coord_axis = subj_real.subj.bowl_coords_mm;
@@ -210,7 +210,7 @@ classdef simulationApp < matlab.apps.AppBase
             end
         
             [bowl_coords_rel, subj.transducer_angle, subj.pad_offset_mm, focus_depth] ...
-                = get_transducer_position(medium, focus_coords_rel, subj.expl.bowl_coord_axis, subj.expl.min_pad_offset, subj.expl.add_offset);
+                = get_transducer_position(medium, focus_coords_rel, subj.expl.bowl_coord_axis, subj.expl.min_pad_offset, subj.expl.add_offset, ~app.save_subject);
             
             subj.bowl_coords = bowl_coords_rel + (subj.focus_coords - focus_coords_rel);
             
@@ -232,9 +232,17 @@ classdef simulationApp < matlab.apps.AppBase
             app.s = subj;
 
             if app.save_subject
+                if app.SubjectDropDown.Value ~= "Other"
+                    id = app.SubjectDropDown.Value;
+                else
+                    id = app.OtherEditField.Value;
+                end
+
+                name = strcat(id, "_", app.RealSham.Value);
+                subj_filename = fullfile('subject_init_params/', strcat(name, '.mat'));
                 save(subj_filename, 'subj');
 
-                msg = "Subject " + strcat(app.SubjectNameEditField.Value, "_", app.RealSham.Value) + " loaded" + newline + app.output_msg;
+                msg = "Subject " + strcat(app.SubjectNameEditField.Value, "_", app.RealSham.Value) + " saved" + newline + app.output_msg;
                 app.TextArea.Value = msg;
                 app.output_msg = msg;
             end
@@ -646,12 +654,12 @@ classdef simulationApp < matlab.apps.AppBase
             % Create ISPPADeviceWcm2EditFieldLabel
             app.ISPPADeviceWcm2EditFieldLabel = uilabel(app.CenterPanel);
             app.ISPPADeviceWcm2EditFieldLabel.HorizontalAlignment = 'right';
-            app.ISPPADeviceWcm2EditFieldLabel.Position = [85 163 127 22];
+            app.ISPPADeviceWcm2EditFieldLabel.Position = [67 163 127 22];
             app.ISPPADeviceWcm2EditFieldLabel.Text = 'ISPPA Device (W/cm2)';
 
             % Create ISPPADeviceWcm2EditField
             app.ISPPADeviceWcm2EditField = uieditfield(app.CenterPanel, 'numeric');
-            app.ISPPADeviceWcm2EditField.Position = [220 163 36 22];
+            app.ISPPADeviceWcm2EditField.Position = [202 163 54 22];
             app.ISPPADeviceWcm2EditField.Value = 20;
 
             % Create RightPanel

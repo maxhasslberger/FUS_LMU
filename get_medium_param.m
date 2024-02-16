@@ -1,12 +1,6 @@
-function [medium, focus_coords, input_ct] = get_medium_param(t1_filename, ct_filename, focus_coords)
+function [medium, focus_coords, input_ct] = get_medium_param(t1_filename, ct_filename, focus_coords, plot)
 % Author: Siti N. Yaakub, University of Plymouth, 7 Sep 2022; Adjusted by
 % Max Hasslberger, Technical University of Munich, 21 May 2023
-arguments
-    t1_filename char
-    ct_filename char
-    focus_coords (1,3) {mustBeNumeric}
-%     bowl_coords (1,3) {mustBeNumeric}
-end
 % arguments (Repeating)
 %     varargin
 % end
@@ -45,18 +39,20 @@ tol = 2;
 t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
 % voxelPlot(double(input_ct > 1500 | focus_space));
 
-% figure;
-% imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));
-% figure;
-% imagesc(imrotate(squeeze(input_ct(focus_coords(1), :, :) > 500 | focus_space(focus_coords(1), :, :)), 90));
-% figure;
-% imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [1 2]), 90));
-figure;
-imagesc(imrotate(squeeze(t1_img(:, focus_coords(2), :)), 90));
-figure;
-imagesc(imrotate(squeeze(t1_img(focus_coords(1), :, :)), 90));
-figure;
-imagesc(imrotate(squeeze(t1_img(:, :, focus_coords(3))), 90));
+if plot
+    % figure;
+    % imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));
+    % figure;
+    % imagesc(imrotate(squeeze(input_ct(focus_coords(1), :, :) > 500 | focus_space(focus_coords(1), :, :)), 90));
+    % figure;
+    % imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [1 2]), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(:, focus_coords(2), :)), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(focus_coords(1), :, :)), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(:, :, focus_coords(3))), 90));
+end
 
 % update hu_max
 ct_max = max(input_ct(:));

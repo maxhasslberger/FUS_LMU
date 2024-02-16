@@ -1,5 +1,9 @@
 function [bowl_coords_rel, opt_angle, pad_offset, focus_depth] = ...
-    get_transducer_position(medium, focus_coords_rel, bowl_coord_axis, min_pad_offset, add_offset)
+    get_transducer_position(medium, focus_coords_rel, bowl_coord_axis, min_pad_offset, add_offset, plot)
+
+if nargin < 6
+    plot = true;
+end
 
 if all(bowl_coord_axis > 0)
     % Manual coordinate axis input
@@ -123,18 +127,20 @@ img2(focus_coords_rel(1), focus_coords_rel(2)) = 2;
 % focus_mask = zeros(size(medium.sound_speed));
 % focus_mask(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
 
-figure;
-imagesc(flipud(imrotate(img1, 90)));
-xlabel('x')
-ylabel('z')
-set(gca,'YDir','normal')
-
-figure;
-imagesc(flipud(imrotate(img2, 90)));
-xlabel('x')
-ylabel('y')
-set(gca,'YDir','normal')
-colorbar;
+if plot
+    figure;
+    imagesc(flipud(imrotate(img1, 90)));
+    xlabel('x')
+    ylabel('z')
+    set(gca,'YDir','normal')
+    
+    figure;
+    imagesc(flipud(imrotate(img2, 90)));
+    xlabel('x')
+    ylabel('y')
+    set(gca,'YDir','normal')
+    colorbar;
+end
 
 % voxelPlot(double(bowl_mask | medium.sound_speed > 1500));
 
