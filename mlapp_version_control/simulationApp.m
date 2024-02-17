@@ -250,6 +250,10 @@ classdef simulationApp < matlab.apps.AppBase
 
         % Button pushed function: PreparesimulationButton
         function PreparesimulationButtonPushed(app, event)
+            app.save_subject = false;
+            app.StoresettingsButtonPushed();
+            app.save_subject = true;
+
             msg = ...
                  "Bowl_coords_mm: " + num2str(app.s.bowl_coords_mm) + newline + ...
                  "focus_depth_mm_NeuroFUS: " + num2str(app.s.focus_depth_mm_NeuroFUS) + newline + ...
@@ -259,10 +263,6 @@ classdef simulationApp < matlab.apps.AppBase
 
             app.TextArea.Value = msg;
             app.output_msg = msg;
-
-            app.save_subject = false;
-            app.StoresettingsButtonPushed();
-            app.save_subject = true;
 
             app.simulation_ready = true;
         end
