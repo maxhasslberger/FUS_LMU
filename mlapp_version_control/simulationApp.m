@@ -201,12 +201,13 @@ classdef simulationApp < matlab.apps.AppBase
             sham_cond = app.RealSham.Value == "sham";
             if sham_cond
                 subj_filename_real = fullfile('subject_init_params/', strcat(app.SubjectNameEditField.Value, '_real.mat'));
-                subj_real = load(subj_filename_real, 'subj');
+                subj_real = load(subj_filename_real, 'subj').subj;
         
-                subj.expl.bowl_coord_axis = subj_real.subj.bowl_coords_mm;
-                subj.pressure = subj_real.subj.pressure;
-                subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset;
-                subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis - (subj.focus_coords - focus_coords_rel);
+                subj.expl.bowl_coord_axis = subj_real.expl.bowl_coord_axis;
+                subj.expl.isppa_device = subj_real.expl.isppa_device; % W/cm^2 - FDA ISPTA limit = 720 mW/cm^2
+                subj.pressure = subj_real.pressure;
+%                 subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset;
+%                 subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis - (subj.focus_coords - focus_coords_rel);
             end
         
             [bowl_coords_rel, subj.transducer_angle, subj.pad_offset_mm, focus_depth] ...
