@@ -7,7 +7,7 @@ function [pressure, phase] = generate_driving_params(focus_depths, transducer, i
 %% Create driving_param mat files
 if nargin < 4
 %     amp = [42272, 45000];
-    amp = 35000:2500:70000;
+    amp = 35000:1250:50000;
 end
 
 if ~strcmp(transducer,'CTX500')
