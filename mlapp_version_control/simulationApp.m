@@ -173,7 +173,7 @@ classdef simulationApp < matlab.apps.AppBase
 
 
              % Coordinate transformation into matlab space
-            focus_coords_mm = subj.expl.focus_coords_mm_orig + subj.offset;
+            focus_coords_mm = subj.expl.focus_coords_mm_orig + subj.offset + 1;
             
             % Convert into kgrid space
             subj.dxyz = [1.0, 1.0, 1.0] * 1e-3; % m

@@ -35,9 +35,13 @@ input_ct = double(input_ct);
 
 % focus_space = zeros(size(input_ct));
 % focus_space(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
-tol = 2;
-t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
+% tol = 2;
+% t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
 % voxelPlot(double(input_ct > 1500 | focus_space));
+tol = 0;
+t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, :) = 1000;
+t1_img(:, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
+t1_img(focus_coords(1)-tol:focus_coords(1)+tol, :, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
 
 if plot
     % figure;
