@@ -1,8 +1,8 @@
 % Load results file in advance!
 
-disp("Max. ISPPA: ", Isppa)
-disp("ISPPA at Focus: ", Isppa_focus)
-disp("Max. ISPTA: ", Ispta)
+disp("Max. ISPPA: " + string(Isppa))
+disp("ISPPA at Focus: " + string(isppa_focus))
+disp("Max. ISPTA: " + string(Ispta))
 
 figure;
 ax1 = axes;

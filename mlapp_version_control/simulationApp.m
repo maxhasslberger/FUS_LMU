@@ -233,13 +233,8 @@ classdef simulationApp < matlab.apps.AppBase
             app.s = subj;
 
             if app.save_subject
-                if app.SubjectDropDown.Value ~= "Other"
-                    id = app.SubjectDropDown.Value;
-                else
-                    id = app.OtherEditField.Value;
-                end
 
-                name = strcat(id, "_", app.RealSham.Value);
+                name = strcat(subj.id, "_", app.RealSham.Value);
                 subj_filename = fullfile('subject_init_params/', strcat(name, '.mat'));
                 save(subj_filename, 'subj');
 
