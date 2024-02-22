@@ -203,10 +203,10 @@ classdef simulationApp < matlab.apps.AppBase
                 subj_filename_real = fullfile('subject_init_params/', strcat(app.SubjectNameEditField.Value, '_real.mat'));
                 subj_real = load(subj_filename_real, 'subj').subj;
         
-                subj.expl.bowl_coord_axis = subj_real.bowl_coords_mm;
+                subj.expl.bowl_coord_axis = subj_real.bowl_coords_mm * 1e-3 ./ subj.dxyz;
                 subj.expl.isppa_device = subj_real.expl.isppa_device; % W/cm^2 - FDA ISPTA limit = 720 mW/cm^2
                 subj.pressure = subj_real.pressure;
-                subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset;
+                subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset + 1;
                 subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis - (subj.focus_coords - focus_coords_rel);
             end
         
@@ -225,7 +225,7 @@ classdef simulationApp < matlab.apps.AppBase
             %     [~, subj.phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
             end
         
-            subj.bowl_coords_mm = ((subj.bowl_coords / 1e-3 .* subj.dxyz) - subj.offset); % mm
+            subj.bowl_coords_mm = ((subj.bowl_coords / 1e-3 .* subj.dxyz) - subj.offset - 1); % mm
             subj.focus_depth_mm_NeuroFUS = subj.focus_depth_mm - 13; % Distance to device face
 
             subj.id = app.SubjectNameEditField.Value;
