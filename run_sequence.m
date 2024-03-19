@@ -1,113 +1,145 @@
 %% Init params
 close all;
 clear;
-% Data
 
-% subj_id = 'theresa';
-% subj_id = 'boris';
-% subj_id = 'FUN0001';
-% subj_id = 'FUN0003';
-% subj_id = 'FUN0005';
-subj_id = 'FUN0007';
+% Select conditions
+% subj.id = 'FUNtest01';
+% subj.id = 'FUN0000';
+subj.id = 'FUN0001';
+% subj.id = 'FUN0002';
+% subj.id = 'FUN0003';
+% subj.id = 'FUN0004';
+% subj.id = 'FUN0005';
+% subj.id = 'FUN0006';
+% subj.id = 'FUN0007';
+% subj.id = 'FUN0009';
+% subj.id = 'FUN0008';
+% subj.id = 'FUN0010';
+% subj.id = 'FUN0011';
+% subj.id = 'FUN0012';
+% subj.id = 'FUN0013';
+% subj.id = 'FUN0014';
+% subj.id = 'FUN0017';
 
-filepath = '../Scans';
 
-% t1_filename = fullfile(filepath, 'FUNtest01t1_T1w_MPRAGE_t1.nii');
-% t1_filename = fullfile(filepath, 'boris_t1w.nii');
-% t1_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9.nii');
-% t1_filename = fullfile(filepath, 'FUN0003t1_T1w_MPRAGE_t1_20230520133911_9.nii');
-% t1_filename = fullfile(filepath, 'FUN0005t1_T1w_MPRAGE_t1.nii');
-t1_filename = fullfile(filepath, 'FUN0007T1_T1w_MPRAGE_t1_20230525161748_11.nii');
-
-% ct_filename = fullfile(filepath, 'FUNtest01t1_T1w_pseudoCT.nii');
-% ct_filename = fullfile(filepath, 'boris_pct.nii');
-% ct_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9_pct.nii');
-% ct_filename = fullfile(filepath, 'FUN0003t1_T1w_MPRAGE_t1_20230520133911_9_pct.nii');
-% ct_filename = fullfile(filepath, 'FUN0005t1_T1w_pseudoCT.nii');
-ct_filename = fullfile(filepath, 'FUN0007T1_T1w_MPRAGE_t1_20230525161748_11pct.nii');
-
-output_dir = fullfile('../Results');
+explorative_sim = true;
+% condition = "real"; % If first simulation: -> First real, then sham!
+condition = "sham";
 
 % Simulation options
 acoustic_sim = true;
 thermal_sim = false;
 % write_localite_file = false;
 
-% Transducer param
-transducer = 'CTX500';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% General param
+filepath = '../Scans';
+output_dir = fullfile('../Results');
 
-% focus_coords_mm_orig = [-27, -21, 40]; % theresa
-% focus_coords_mm_orig = [-27, -21, 40]; % theresa new
-% focus_coords_mm_orig = [-41, -16, 59]; % boris
-% focus_coords_mm_orig = [-41, -6, 39]; % 001 fmri
-% focus_coords_mm_orig = [-41, -16, 59]; % 001
-% focus_coords_mm_orig = [-8, -15, 21]; % 001 sham
-% focus_coords_mm_orig = [-43, -10, 64]; % 003
-% focus_coords_mm_orig = [-17, -13, 25]; % 003 sham
-% focus_coords_mm_orig = [-25, -22, 6]; % 005
-% focus_coords_mm_orig = [-13, -20, -40]; % 005 sham
-% focus_coords_mm_orig = [-29, -5, 56]; % 007
-focus_coords_mm_orig = [-29, -5, 56]; % 007 sham
+sham_cond = condition == "sham";
+disp("Processing subject " + subj.id + "...")
+subj_filename = fullfile('subject_init_params/', strcat(subj.id, "_", condition, '.mat'));
 
-% offset = [96, 126, 126]; % 001
-% offset = [96, 127, 126]; % 003
-% offset = [96, 113, 168]; % 005
-offset = [96, 114, 127]; % 007
+if ~exist(subj_filename, 'file') || explorative_sim
+%% Modify params
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    subj.t1_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9.nii');
+    subj.ct_filename = fullfile(filepath, 'FUN0001t1_T1w_MPRAGE_20230520084537_9_pct.nii');
 
-bowl_coord_axis_origin = [-59, -13, 93]; % 007
+    subj.offset = [96, 126, 126];
+
+    % Explorative params
+    expl.focus_coords_mm_orig = [-8, -15, 21]; % Desired FT or sham focus position - adjust for large diffractions introduced by the skull
+    expl.min_pad_offset = 6; % min. pad offset (added to hair offset (~3 mm))
+    expl.add_offset = 0; % additional pad offset after focus_depth computation
+
+    expl.bowl_coord_axis = [124, 127, 133]; % Adjust relative bowl position (focus at (128, 128, 128))
+    expl.isppa_device = 20; % W/cm^2 - FDA ISPTA limit = 720 mW/cm^2
+
+
+    % Fix params
+    subj.dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
+
+    subj.transducer = 'CTX500';
+    subj.pulse_length = 20e-3; % s
+    subj.pulse_rep_freq = 5; % Hz
+    subj.stim_dur = 80; % s
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Coordinate transformation into matlab space
-focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + offset;
-bowl_coord_axis = bowl_coord_axis_origin .* [-1, 1, 1] + offset;
 
-% Convert into kgrid space
-dxyz = [1.0, 1.0, 1.0] * 1e-3; % m
-% bowl_coords = bowl_coords_mm * 1e-3 ./ dxyz;
-% focus_coords_mm = focus_coords_mm_orig .* [-1, 1, 1] + [192, 256, 256] / 2;
-focus_coords = focus_coords_mm * 1e-3 ./ dxyz;
+    if explorative_sim && exist(subj_filename, 'file')
+        load(subj_filename, 'subj'); % Discard prev. entered params
+    end
+    subj.expl = expl; % Overwrite explorative params
 
+    % Coordinate transformation into matlab space
+    focus_coords_mm = subj.expl.focus_coords_mm_orig + subj.offset;
+    
+    % Convert into kgrid space
+    subj.focus_coords = focus_coords_mm * 1e-3 ./ subj.dxyz;
 
-pulse_length = 20e-3; % s
-pulse_rep_freq = 5; % Hz
-stim_dur = 80; % s
+    % %% Write transformation matrix into position file for Localite
+    % if write_localite_file
+    %     position_dir = fullfile('Localite_pos');
+    %     t_matrix = get_transducer_transform(bowl_coords*dxyz, focus_coords*dxyz);
+    %     
+    %     position_filename = fullfile(position_dir, 't_position.txt');
+    %     if exist(position_filename, 'file') ~= 2
+    %         fopen(position_filename, 'w');
+    %     end
+    %     dlmwrite(position_filename, t_matrix, 'delimiter', ' ');
+    % end
 
-% %% Write transformation matrix into position file for Localite
-% if write_localite_file
-%     position_dir = fullfile('Localite_pos');
-%     t_matrix = get_transducer_transform(bowl_coords*dxyz, focus_coords*dxyz);
-%     
-%     position_filename = fullfile(position_dir, 't_position.txt');
-%     if exist(position_filename, 'file') ~= 2
-%         fopen(position_filename, 'w');
-%     end
-%     dlmwrite(position_filename, t_matrix, 'delimiter', ' ');
-% end
+    % Get grid and medium
+    [medium, focus_coords_rel, ~] = get_medium_param(subj.t1_filename, subj.ct_filename, subj.focus_coords);
 
+    %% Tranducer positioning and param
+%     close all;
 
-% Get grid and medium
-[medium, focus_coords_rel, input_ct] = get_medium_param(ct_filename, focus_coords);
+    if sham_cond
+        subj_filename_real = fullfile('subject_init_params/', strcat(subj.id, '_real.mat'));
+        subj_real = load(subj_filename_real, 'subj');
 
-bowl_coord_axis = bowl_coord_axis - (focus_coords - focus_coords_rel);
+        subj.expl.bowl_coord_axis = subj_real.subj.bowl_coords_mm;
+        subj.pressure = subj_real.subj.pressure;
+        subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset;
+        subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis - (subj.focus_coords - focus_coords_rel);
+    end
 
-%% Tranducer positioning
-% bowl_coord_axis = [132, 127, 133]; % 001, 003, 005, 007
-% bowl_coord_axis = [-1, 128, 128]; % Find angle
-[bowl_coords, transducer_angle, skull_offset_mm, add_offset] = get_transducer_position(medium, focus_coords_rel, bowl_coord_axis);
-bowl_coords = bowl_coords + (focus_coords - focus_coords_rel);
-bowl_coords_mm = ((bowl_coords / 1e-3 .* dxyz) - offset) .* [-1, 1, 1] % mm
+    [bowl_coords_rel, subj.transducer_angle, subj.pad_offset_mm, focus_depth] ...
+        = get_transducer_position(medium, focus_coords_rel, subj.expl.bowl_coord_axis, subj.expl.min_pad_offset, subj.expl.add_offset);
+    
+    subj.bowl_coords = bowl_coords_rel + (subj.focus_coords - focus_coords_rel);
+    
+    subj.focus_depth_mm = focus_depth / 1e-3 * subj.dxyz(1); % mm
+    
+    if ~sham_cond
+    %     [subj.pressure, subj.phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
+        [subj.pressure, subj.phase] = generate_driving_params(subj.focus_depth_mm, subj.transducer, subj.expl.isppa_device); % [Pa, deg]
+    else
+        [~, subj.phase] = get_driving_params(subj.focus_depth_mm, subj.transducer); % [Pa, deg]
+    %     [~, subj.phase] = generate_driving_params(focus_depth_mm, transducer, isppa_device); % [Pa, deg]
+    end
 
-transducer_angle
-skull_offset_mm
+    subj.bowl_coords_mm = ((subj.bowl_coords / 1e-3 .* subj.dxyz) - subj.offset); % mm
+    subj.focus_depth_mm_NeuroFUS = subj.focus_depth_mm - 13; % Distance to device face
 
-% Get electrical params
-focus_depth_mm = ceil(norm(focus_coords / 1e-3 .* dxyz - bowl_coords / 1e-3 .* dxyz)-add_offset); % mm
-[pressure, phase] = get_driving_params(focus_depth_mm, transducer); % [Pa, deg]
-focus_depth_mm_NeuroFUS = focus_depth_mm - 13 % Distance to device face
-% [pressure, isppa_lut] = get_source_pressure(transducer, phase, focus_depth_mm, isppa_device)
+    save(subj_filename, 'subj');
+else
+    load(subj_filename, 'subj');
+end
+
+% Display important params
+disp("Bowl_coords_mm: " + num2str(subj.bowl_coords_mm))
+disp("focus_depth_mm_NeuroFUS: " + num2str(subj.focus_depth_mm_NeuroFUS))
+disp("k-wave Pressure: " + num2str(subj.pressure))
+disp("transducer_angle: " + num2str(subj.transducer_angle))
+disp("pad_offset_mm: " + num2str(subj.pad_offset_mm))
+fprintf("\n\n")
 
 %% Run simulation and store results in output_dir
-tussim_skull_3D(subj_id, t1_filename, ct_filename, output_dir, focus_coords, bowl_coords, focus_depth_mm, transducer, ...
-    'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, 'PulseLength', pulse_length, 'PulseRepFreq', pulse_rep_freq, ...
-    'StimDuration', stim_dur, 'SourcePressure', pressure, 'SourcePhase', phase);
+tussim_skull_3D(subj.id, subj.t1_filename, subj.ct_filename, output_dir, subj.focus_coords, subj.bowl_coords, subj.focus_depth_mm, subj.transducer, ...
+    'RunAcousticSim', acoustic_sim, 'RunThermalSim', thermal_sim, 'PulseLength', subj.pulse_length, 'PulseRepFreq', subj.pulse_rep_freq, ...
+    'StimDuration', subj.stim_dur, 'SourcePressure', subj.pressure, 'SourcePhase', subj.phase);
 
+fprintf("\n\n")

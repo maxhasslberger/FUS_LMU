@@ -5,7 +5,7 @@ if ~strcmp(transducer_id,'CTX500')
     return;
 end
 
-amp = 45000;%30000:15000:60000; % TBD: Dynamic stepsize optimization
+amp = 42272;%30000:15000:60000; % TBD: Dynamic stepsize optimization
 filename = fullfile('driving_params/', strcat('params_dis_', num2str(focus_depth), 'mm.mat'));
 
 % if ~exist(filename, 'file')
@@ -44,8 +44,8 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy, Nz, dz);
 % define the properties of the propagation medium
 medium.sound_speed = 1500*ones(Nx, Ny, Nz);      % [m/s]
 medium.density = 1000*ones(Nx, Ny, Nz);          % [kg/m^3]
-% medium.alpha_coeff = 0.75;      % [dB/(MHz^y cm)]
-% medium.alpha_power = 1.5;
+medium.alpha_coeff = 0.0;      % [dB/(MHz^y cm)]
+medium.alpha_power = 1.43;
 % medium.BonA = 6;
 
 % create the time array
@@ -115,7 +115,7 @@ end
 % sensor.mask = ones(Nx, Ny, Nz);
 % set the record mode such that only the rms and peak values are stored
 % sensor.record = {'p_rms', 'p_max'};
-sensor.record = {'p_max'};
+sensor.record = {'p_max', 'p'};
 
 
 % =========================================================================
@@ -148,11 +148,27 @@ input_args = {'PMLInside', true, 'PlotPML', false, 'DisplayMask', source.p_mask,
 sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
 % sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor);
 
+% extract amplitude from the sensor data
+p = extractAmpPhase(sensor_data.p, 1/kgrid.dt, transducer.source_freq_hz, ...
+    'Window', 'Rectangular', 'FFTPadding', 1);
+
+[max_pressure2, idx2] = max(p(:)); % [Pa] 
+% < max_pressure due to energy in other frq components, otherwise >=, as ppp is discrete -> decr. max value in time domain
+
 % compute Isppa
 x_start = round((focus_depth-5)*1e-3/dx);
 sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Nj]);
-[max_pressure, max_idx] = max(sensor_data.p_max(x_start:end, :), [], 'all');
+max_pressure = max(sensor_data.p_max(x_start:end, :), [], 'all');
 Isppa = max_pressure^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
+
+% % O'Neil's solution
+% velocity = amp / (max(medium.density(:)) * max(medium.sound_speed(:)));
+% p_axial_oneil = focusedAnnulusONeil(transducer.curv_radius_mm/1e3, ...
+%     [transducer.Elements_ID_mm; transducer.Elements_OD_mm]/1e3, repmat(velocity,1,length(phases)), ...
+%     phases-phases(1), transducer.source_freq_hz, medium.sound_speed(end), ...
+%     medium.density(end), (1:100)*1e-3);
+% 
+% i_axial_oneil = p_axial_oneil.^2 / (2 * max(medium.density(:)) * max(medium.sound_speed(:))) * 1e-4; % W/cm^2
 
 lut.isppa(lut_idx) = Isppa;
 lut.pressure(lut_idx) = amp_x;

@@ -1,11 +1,6 @@
-function [medium, focus_coords, input_ct] = get_medium_param(ct_filename, focus_coords)
+function [medium, focus_coords, input_ct] = get_medium_param(t1_filename, ct_filename, focus_coords, plot)
 % Author: Siti N. Yaakub, University of Plymouth, 7 Sep 2022; Adjusted by
 % Max Hasslberger, Technical University of Munich, 21 May 2023
-arguments
-    ct_filename char
-    focus_coords (1,3) {mustBeNumeric}
-%     bowl_coords (1,3) {mustBeNumeric}
-end
 % arguments (Repeating)
 %     varargin
 % end
@@ -31,23 +26,37 @@ hu_max 	= 2000;	% maximum Hounsfield Unit in CT image
 % Load CT image (nifti format)
 % voxel size = 1 x 1 x 1 mm3, matrix size: varies, mostly 176x256x256
 input_ct = niftiread(ct_filename);
-% t1_img = niftiread(t1_filename);
+t1_img = niftiread(t1_filename);
 % header = niftiinfo(ct_filename);
 input_ct = double(input_ct);
-input_ct = flip(input_ct, 1); % mirror x axis for voxel space
+% input_ct = flip(input_ct, 1); % mirror x axis for voxel space
 
-voxelPlot(double(input_ct > 1500));
+% voxelPlot(double(input_ct > 1500));
 
-focus_space = zeros(size(input_ct));
-focus_space(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
-voxelPlot(double(input_ct > 1500 | focus_space));
+% focus_space = zeros(size(input_ct));
+% focus_space(focus_coords(1), focus_coords(2), focus_coords(3)) = 1;
+% tol = 2;
+% t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
+% voxelPlot(double(input_ct > 1500 | focus_space));
+tol = 0;
+t1_img(focus_coords(1)-tol:focus_coords(1)+tol, focus_coords(2)-tol:focus_coords(2)+tol, :) = 1000;
+t1_img(:, focus_coords(2)-tol:focus_coords(2)+tol, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
+t1_img(focus_coords(1)-tol:focus_coords(1)+tol, :, focus_coords(3)-tol:focus_coords(3)+tol) = 1000;
 
-figure;
-imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));
-figure;
-imagesc(imrotate(squeeze(input_ct(focus_coords(1), :, :) > 500 | focus_space(focus_coords(1), :, :)), 90));
-figure;
-imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [1 2]), 90));
+if plot
+    % figure;
+    % imagesc(imrotate(squeeze(input_ct(:, focus_coords(2), :) > 500 | focus_space(:, focus_coords(2), :)), 90));
+    % figure;
+    % imagesc(imrotate(squeeze(input_ct(focus_coords(1), :, :) > 500 | focus_space(focus_coords(1), :, :)), 90));
+    % figure;
+    % imagesc(imrotate(permute(squeeze(input_ct(:, :, focus_coords(3)) > 500 | focus_space(:, :, focus_coords(3))), [1 2]), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(:, focus_coords(2), :)), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(focus_coords(1), :, :)), 90));
+    figure;
+    imagesc(imrotate(squeeze(t1_img(:, :, focus_coords(3))), 90));
+end
 
 % update hu_max
 ct_max = max(input_ct(:));

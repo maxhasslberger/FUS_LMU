@@ -106,13 +106,13 @@ f = -Fs/2:Fs/N:Fs/2;
 [~, idx] = min(abs(f - source_freq));
 
 % Extract phases
-all_phases = angle(fft_signal(:, idx));
+all_phases = -angle(fft_signal(:, idx)); % There is a k-wave function to do this!
 phase = nan(1, transducer.n_elements);
 phase_idx = [1, 420, 347, 277];
 % phase_idx = [1, 873, 143, 1567];
 % phase_idx = [1, 774, 474, 719]; % TODO: configure appropriate param for Nx=256, Ny=128, Nz=128
-phase_idx = [1, 1, 1, 1];
-for i = 1:transducer.n_elements
+phase_idx = [1, 1, 1, 1]; % What sub element index to pick per element
+for i = 1:transducer.n_elements % CTX-500 -> 4 elements
 %     phase(i) = mean(all_phases(mask_sensor_p == i));
     phase_elements = all_phases(mask_sensor_p == i);
 %     [min_val, min_idx] = min(abs(phase_elements - phase(1)));
