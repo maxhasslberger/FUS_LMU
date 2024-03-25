@@ -15,9 +15,9 @@ Repository used for tFUS simulations for clinical studies to stimulate the human
    2.3. Enter sonication protocol and subject name
 3. `Subject Param`\
    3.1. Enter subject (spatial T1w) offset - Open subject T1w scan and enter the (outermost negative) starting index as a positive integer for each dimension (May be exact or close to (Nx, Ny, Nz)  / 2)\
-   3.2. Enter Focus coordinates (matching the T1w scan), minimum offset of gel pad (might be desired for an inactive control condition), additional offset (this offset parameter is not considered when computing the focus depth), and ISPPA in water\
-   3.3. The Bowl axis is always given relative to a focus point at (128, 128, 128). It solely determines the alignment of the transducer axis, not the focus depth! It can be tuned arbitrarily based on the visual output in `Prepare simulation`.
+   3.2. Enter Focus coordinates (matching the T1w scan), minimum offset of gel pad (may be desirable for an inactive control condition), additional gel pad offset (this offset parameter is not considered when computing the focus depth), and ISPPA in water\
+   3.3. The Bowl axis is always given relative to a focus point at (128, 128, 128). It solely determines the alignment of the transducer face axis, not the focus depth! It can be tuned arbitrarily based on the visual output in `Prepare simulation`.
 4. Enter complete Results path
-5. Push `Prepare simulation` to observe the focus point on the T1w scan from different views as well as the position of the transducer face center relative to both focus point and Pseudo CT slice.
+5. Push `Prepare simulation` to observe the desired focus point on the T1w scan from different views as well as the position of the transducer face center relative to both focus point and Pseudo CT slice.
 6. Push `Run simulation` to carry out acoustic simulation and store the results in the specified path
 
