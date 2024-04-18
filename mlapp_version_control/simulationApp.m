@@ -203,7 +203,7 @@ classdef simulationApp < matlab.apps.AppBase
                 subj_filename_real = fullfile('subject_init_params/', strcat(app.SubjectNameEditField.Value, '_real.mat'));
                 subj_real = load(subj_filename_real, 'subj').subj;
         
-                subj.expl.bowl_coord_axis = subj_real.bowl_coords_mm * 1e-3 ./ subj.dxyz;
+                subj.expl.bowl_coord_axis = subj_real.bowl_coords_mm;
                 subj.expl.isppa_device = subj_real.expl.isppa_device; % W/cm^2 - FDA ISPTA limit = 720 mW/cm^2
                 subj.pressure = subj_real.pressure;
                 subj.expl.bowl_coord_axis = subj.expl.bowl_coord_axis + subj.offset + 1;
@@ -271,6 +271,10 @@ classdef simulationApp < matlab.apps.AppBase
                     "Simulation started - Follow Matlab cmd Window" + newline;
                 app.TextArea.Value = msg;
                 app.output_msg = msg;
+
+                if ~exist(fullfile("..", "Results"), "dir")
+                    mkdir(fullfile("..", "Results"));
+                end
                 
                 tussim_skull_3D(...
                     app.s.id, ...
@@ -380,9 +384,9 @@ classdef simulationApp < matlab.apps.AppBase
 
             % Create SubjectDropDown
             app.SubjectDropDown = uidropdown(app.LeftPanel);
-            app.SubjectDropDown.Items = {'FUN0001', 'FUN0002', 'FUN0003', 'FUN0004', 'FUN0005', 'FUN0006', 'FUN0007', 'FUN0008', 'FUN0009', 'FUN0010', 'FUN0011', 'FUN0012', 'FUN0013', 'FUN00014', 'FUN0000', 'FUNtest01', 'FUN0017', 'Other'};
+            app.SubjectDropDown.Items = {'Dummy', 'FUN0001', 'FUN0002', 'FUN0003', 'FUN0004', 'FUN0005', 'FUN0006', 'FUN0007', 'FUN0008', 'FUN0009', 'FUN0010', 'FUN0011', 'FUN0012', 'FUN0013', 'FUN00014', 'FUN0000', 'FUNtest01', 'FUN0017', 'Other'};
             app.SubjectDropDown.Position = [75 411 100 22];
-            app.SubjectDropDown.Value = 'FUN0001';
+            app.SubjectDropDown.Value = 'Dummy';
 
             % Create OtherEditFieldLabel
             app.OtherEditFieldLabel = uilabel(app.LeftPanel);
@@ -452,7 +456,7 @@ classdef simulationApp < matlab.apps.AppBase
             % Create TransducerEditField
             app.TransducerEditField = uieditfield(app.LeftPanel, 'text');
             app.TransducerEditField.Position = [86 163 85 22];
-            app.TransducerEditField.Value = 'CTX-500';
+            app.TransducerEditField.Value = 'CTX500';
 
             % Create Label
             app.Label = uilabel(app.LeftPanel);
